@@ -1,0 +1,75 @@
+BiLSTM Weekly Kansas Clean - Boundary and Calibration Optimization
+Best mode: boundary_ce
+Selected variant: raw_argmax_guardrail
+Thresholds: {0: 1.3, 1: 0.8, 2: 1.3, 4: 0.6, 5: 0.5}
+Calibration: isotonic
+Rolling folds: 4
+Imbalance handling: class_weight only (no ROS)
+Seq Length: 52
+Accuracy (after): 0.6879
+Macro F1 (after): 0.7075
+Weighted F1 (after): 0.6867
+F1 None (after): 0.6941
+F1 D0 (after): 0.5603
+F1 D3 (after): 0.6702
+F1 D4 (after): 0.8698
+
+Macro F1 raw argmax: 0.7075
+Macro F1 calibrated+thresholded: 0.6458
+Macro F1 selected final: 0.7075
+Macro F1 delta (selected final vs raw): +0.0000
+
+Before vs After against historical baseline:
+  Macro F1: before=0.5900, after=0.7075, delta=+0.1175
+  None F1: before=0.6941, after=0.6941, delta=+0.0000
+  D0 F1: before=0.5603, after=0.5603, delta=+0.0000
+  D3 F1: before=0.2700, after=0.6702, delta=+0.4002
+  D4 F1: before=0.0000, after=0.8698, delta=+0.8698
+
+Top confusion pairs before:
+  None -> D0: 1465
+  D0 -> None: 960
+  D0 -> D1: 489
+  D2 -> D3: 359
+  D2 -> D1: 304
+  D1 -> D0: 294
+  D1 -> D2: 133
+  D3 -> D4: 124
+
+Top confusion pairs after:
+  None -> D0: 1465
+  D0 -> None: 960
+  D0 -> D1: 489
+  D2 -> D3: 359
+  D2 -> D1: 304
+  D1 -> D0: 294
+  D1 -> D2: 133
+  D3 -> D4: 124
+
+Rolling-threshold CV diagnostics:
+  Fold 1 (2021-10-26 to 2022-02-22): macro=0.7008, pair01=0.4056, pair12=0.0942, obj=0.6300
+  Fold 2 (2022-03-01 to 2022-06-28): macro=0.7737, pair01=0.1450, pair12=0.0833, obj=0.8712
+  Fold 3 (2022-07-05 to 2022-11-01): macro=0.6053, pair01=0.4790, pair12=0.0192, obj=0.6065
+  Fold 4 (2022-11-08 to 2023-03-07): macro=0.7120, pair01=0.3514, pair12=0.0434, obj=0.7580
+
+Per-class F1 (after):
+  None: 0.6941
+  D0: 0.5603
+  D1: 0.8074
+  D2: 0.6429
+  D3: 0.6702
+  D4: 0.8698
+
+Classification Report (after):
+              precision    recall  f1-score   support
+
+        None     0.7368    0.6562    0.6941      4287
+          D0     0.5383    0.5843    0.5603      3512
+          D1     0.7750    0.8426    0.8074      3298
+          D2     0.8351    0.5226    0.6429      1395
+          D3     0.5729    0.8074    0.6702       706
+          D4     0.7853    0.9746    0.8698       473
+
+    accuracy                         0.6879     13671
+   macro avg     0.7072    0.7313    0.7075     13671
+weighted avg     0.6982    0.6879    0.6867     13671
