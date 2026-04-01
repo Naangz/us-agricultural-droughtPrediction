@@ -27,6 +27,48 @@ Outputs are written to:
 
 ---
 
+## Datasets Explained
+
+### Raw source datasets
+- [`NASA_POWER_daily_2010_2025_KAN.csv`](./NASA_POWER_daily_2010_2025_KAN.csv)
+  - Daily NASA POWER weather for Kansas
+  - File rows in this repo: `116,880`
+- [`KAN_dm_export_20100101_20251231.csv`](./KAN_dm_export_20100101_20251231.csv)
+  - Weekly USDM drought coverage by county
+  - File rows in this repo: `87,780`
+
+### Integrated datasets
+- [`Integrated_weekly_KAN.csv`](./Integrated_weekly_KAN.csv)
+  - Full Kansas integrated weekly table
+  - File rows in this repo: `77,748` across `93` counties
+- [`Integrated_weekly_KAN_20counties.csv`](./Integrated_weekly_KAN_20counties.csv)
+  - Reduced 20-county Kansas integrated weekly table used by training script
+  - File rows in this repo: `16,720` across `20` counties
+  - Date range: `2009-12-29` to `2025-12-30`
+
+### How integration is built
+Integration logic is implemented in:
+- [`integrate_weekly_nasa_usdm_20_counties.py`](./integrate_weekly_nasa_usdm_20_counties.py)
+
+Steps:
+1. NASA daily weather is aggregated to weekly means using USDM-aligned week start.
+2. USDM weekly table is cleaned and filtered by state.
+3. A fixed county set (20 counties) is selected deterministically.
+4. NASA weekly features and USDM weekly drought fields are merged on `week_start`.
+
+### Integrated dataset schema
+Columns in `Integrated_weekly_KAN_20counties.csv`:
+- Time/index: `week_start, ValidEnd, Year, Month, YearWeek`
+- Location: `FIPS, County, State`
+- Weather: `ALLSKY_SFC_SW_DWN, PRECTOTCORR, PS, RH2M, T2M, WS2M`
+- Drought coverage: `None, D0, D1, D2, D3, D4`
+
+Meaning of drought coverage columns:
+- They are cumulative area percentages by severity threshold.
+- Example: `D2` means area in at least D2 drought severity.
+
+---
+
 ## Data and Labeling Pipeline
 
 ### 1) Load and sort
@@ -47,18 +89,43 @@ The script decumulates these into PMF-like components:
 
 Then label is assigned by `argmax` over `PMF_None..PMF_D4`.
 
-### 3) Feature engineering
-Features include:
-- Base weather: `ALLSKY_SFC_SW_DWN, PRECTOTCORR, PS, RH2M, T2M, WS2M`
-- Weather lags: precipitation/temperature/humidity at lags `1,2,4,8`
-- Rolling stats (shifted to avoid same-week lookahead):
-  - precipitation mean/std over windows `4,12`
-  - temperature mean over windows `4,12`
-- Seasonal encoding: `week_sin, week_cos`
-- Drought persistence features:
-  - lag-1 and lag-2 for `None, D0, D1, D2, D3, D4`
-  - carryover aggregates (`drought_carryover_lag1`, `severe_carryover_lag1`)
-- Interaction feature: `heat_dry_stress = T2M * (1 - RH2M/100)`
+### 3) Feature list and calculations
+
+Base weather features (direct):
+- `ALLSKY_SFC_SW_DWN`
+- `PRECTOTCORR`
+- `PS`
+- `RH2M`
+- `T2M`
+- `WS2M`
+
+Lag features by county (`groupby(FIPS).shift(k)`):
+- `PREC_lag1, PREC_lag2, PREC_lag4, PREC_lag8` from `PRECTOTCORR`
+- `T2M_lag1, T2M_lag2, T2M_lag4, T2M_lag8` from `T2M`
+- `RH2M_lag1, RH2M_lag2, RH2M_lag4, RH2M_lag8` from `RH2M`
+
+Rolling features by county (all shifted by 1 week before rolling):
+- `PREC_roll4_mean = mean(PRECTOTCORR[t-1 ... t-4])`
+- `PREC_roll4_std = std(PRECTOTCORR[t-1 ... t-4])`
+- `PREC_roll12_mean = mean(PRECTOTCORR[t-1 ... t-12])`
+- `PREC_roll12_std = std(PRECTOTCORR[t-1 ... t-12])`
+- `T2M_roll4_mean = mean(T2M[t-1 ... t-4])`
+- `T2M_roll12_mean = mean(T2M[t-1 ... t-12])`
+
+Seasonality encoding:
+- `week_sin = sin(2*pi*iso_week/52)`
+- `week_cos = cos(2*pi*iso_week/52)`
+
+Drought memory features:
+- Lag-1 and lag-2 for each cumulative drought series:
+  - `None_lag1, D0_lag1, D1_lag1, D2_lag1, D3_lag1, D4_lag1`
+  - `None_lag2, D0_lag2, D1_lag2, D2_lag2, D3_lag2, D4_lag2`
+- Composite carryover signals:
+  - `drought_carryover_lag1 = D0_lag1 + D1_lag1 + 0.5*D2_lag1`
+  - `severe_carryover_lag1 = D3_lag1 + D4_lag1`
+
+Interaction feature:
+- `heat_dry_stress = T2M * (1 - RH2M/100)`
 
 Rows with missing values in required features are dropped.
 
