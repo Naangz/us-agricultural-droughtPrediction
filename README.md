@@ -91,6 +91,8 @@ Then label is assigned by `argmax` over `PMF_None..PMF_D4`.
 
 ### 3) Feature list and calculations
 
+Total model input features after engineering: **41**
+
 Base weather features (direct):
 - `ALLSKY_SFC_SW_DWN`
 - `PRECTOTCORR`
@@ -126,6 +128,49 @@ Drought memory features:
 
 Interaction feature:
 - `heat_dry_stress = T2M * (1 - RH2M/100)`
+
+Complete flat feature list used by the model (`feature_cols`):
+1. `ALLSKY_SFC_SW_DWN`
+2. `PRECTOTCORR`
+3. `PS`
+4. `RH2M`
+5. `T2M`
+6. `WS2M`
+7. `PREC_lag1`
+8. `PREC_lag2`
+9. `PREC_lag4`
+10. `PREC_lag8`
+11. `T2M_lag1`
+12. `T2M_lag2`
+13. `T2M_lag4`
+14. `T2M_lag8`
+15. `RH2M_lag1`
+16. `RH2M_lag2`
+17. `RH2M_lag4`
+18. `RH2M_lag8`
+19. `PREC_roll4_mean`
+20. `PREC_roll4_std`
+21. `PREC_roll12_mean`
+22. `PREC_roll12_std`
+23. `T2M_roll4_mean`
+24. `T2M_roll12_mean`
+25. `week_sin`
+26. `week_cos`
+27. `None_lag1`
+28. `D0_lag1`
+29. `D1_lag1`
+30. `D2_lag1`
+31. `D3_lag1`
+32. `D4_lag1`
+33. `None_lag2`
+34. `D0_lag2`
+35. `D1_lag2`
+36. `D2_lag2`
+37. `D3_lag2`
+38. `D4_lag2`
+39. `drought_carryover_lag1`
+40. `severe_carryover_lag1`
+41. `heat_dry_stress`
 
 Rows with missing values in required features are dropped.
 
