@@ -1,0 +1,47 @@
+BiLSTM Weekly Kansas - Scenario 2: Correlation-aware Feature Selection
+Best trial: none_focal_inv_cw_64x32
+Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 15
+Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.5638
+Val Macro F1 (raw/tuned): 0.5638 / 0.6702
+Class multipliers: [1.2030627727508545, 0.550000011920929, 0.5721477270126343, 0.9192289710044861, 1.5919619798660278, 0.8774642944335938]
+Accuracy (raw): 0.5368
+Macro F1 (raw): 0.4289
+Accuracy: 0.5433
+Macro F1: 0.4165
+Weighted F1: 0.5346
+
+Trial leaderboard:
+  none_focal_inv_cw_64x32: 0.5638 (balancer=NONE)
+  ros_focal_inv_no_cw_128x64: 0.5510 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.5313 (balancer=ROS)
+
+Per-class F1:
+  None: 0.8508
+  D0: 0.5986
+  D1: 0.5162
+  D2: 0.1182
+  D3: 0.3295
+  D4: 0.0854
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.8693    0.8330    0.8508      1150
+          D0     0.6250    0.5744    0.5986       975
+          D1     0.5397    0.4947    0.5162       948
+          D2     0.5606    0.0661    0.1182       560
+          D3     0.2076    0.7986    0.3295       288
+          D4     0.1223    0.0656    0.0854       259
+
+    accuracy                         0.5433      4180
+   macro avg     0.4874    0.4721    0.4165      4180
+weighted avg     0.6043    0.5433    0.5346      4180

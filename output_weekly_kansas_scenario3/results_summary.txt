@@ -1,0 +1,57 @@
+BiLSTM Weekly Kansas - Scenario 3: Macro F1-driven Feature Selection
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.8261
+Feature ranking method: Permutation Importance (macro F1 on validation)
+Subset sizes evaluated: [30, 25, 20, 15, 10]
+
+Subset evaluation results:
+  Top-10: Validation Macro F1 = 0.8240
+  Top-15: Validation Macro F1 = 0.8204
+  Top-25: Validation Macro F1 = 0.7953
+  Top-20: Validation Macro F1 = 0.7845
+  Top-30: Validation Macro F1 = 0.3751
+
+Best subset selected: Top-10 (10 features) with val macro-F1 = 0.8240
+Selected features: ['D3_lag1', 'D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'severe_carryover_lag1', 'D2_lag2', 'PREC_lag1', 'drought_carryover_lag1', 'PREC_roll12_mean']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.8320
+Val Macro F1 (raw/tuned): 0.8320 / 0.8491
+Class multipliers: [1.0220733880996704, 1.4260830879211426, 1.4041149616241455, 0.8815466165542603, 1.1811882257461548, 1.1346834897994995]
+Accuracy (raw): 0.7543
+Macro F1 (raw): 0.6710
+Accuracy: 0.7536
+Macro F1: 0.6710
+Weighted F1: 0.7491
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.8320 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8202 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.8031 (balancer=NONE)
+
+Per-class F1:
+  None: 0.8992
+  D0: 0.7572
+  D1: 0.7449
+  D2: 0.7126
+  D3: 0.5969
+  D4: 0.3152
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9271    0.8730    0.8992      1150
+          D0     0.7115    0.8092    0.7572       975
+          D1     0.7571    0.7331    0.7449       948
+          D2     0.7939    0.6464    0.7126       560
+          D3     0.4567    0.8611    0.5969       288
+          D4     0.7324    0.2008    0.3152       259
+
+    accuracy                         0.7536      4180
+   macro avg     0.7298    0.6873    0.6710      4180
+weighted avg     0.7759    0.7536    0.7491      4180
