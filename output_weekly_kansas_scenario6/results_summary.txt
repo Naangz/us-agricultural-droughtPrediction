@@ -1,0 +1,67 @@
+BiLSTM Weekly Kansas Tuned (20 counties)
+Best trial: none_focal_inv_cw_64x32
+Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Seq Length: 52
+Val Macro F1 (best trial): 0.2510
+Val Macro F1 (raw/tuned): 0.2510 / 0.2570
+Class multipliers: [1.6870434284210205, 1.0435301065444946, 1.0128508806228638, 1.0313466787338257, 0.9367184042930603, 0.8775627613067627]
+Selected features:
+  ALLSKY_SFC_SW_DWN
+  PRECTOTCORR
+  PS
+  RH2M
+  T2M
+  WS2M
+  PREC_lag1
+  PREC_lag2
+  PREC_lag4
+  PREC_lag8
+  T2M_lag1
+  T2M_lag2
+  T2M_lag4
+  T2M_lag8
+  RH2M_lag1
+  RH2M_lag2
+  RH2M_lag4
+  RH2M_lag8
+  PREC_roll4_mean
+  PREC_roll4_std
+  PREC_roll12_mean
+  PREC_roll12_std
+  T2M_roll4_mean
+  T2M_roll12_mean
+  week_sin
+  week_cos
+  heat_dry_stress
+Accuracy (raw): 0.2031
+Macro F1 (raw): 0.1900
+Accuracy: 0.2134
+Macro F1: 0.1991
+Weighted F1: 0.2232
+
+Trial leaderboard:
+  none_focal_inv_cw_64x32: 0.2510 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.2448 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.2224 (balancer=ROS)
+
+Per-class F1:
+  None: 0.2366
+  D0: 0.2610
+  D1: 0.2584
+  D2: 0.1511
+  D3: 0.0836
+  D4: 0.2041
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.4763    0.1574    0.2366      1150
+          D0     0.2936    0.2349    0.2610       975
+          D1     0.2155    0.3228    0.2584       948
+          D2     0.2000    0.1214    0.1511       560
+          D3     0.0541    0.1840    0.0836       288
+          D4     0.1964    0.2124    0.2041       259
+
+    accuracy                         0.2134      4180
+   macro avg     0.2393    0.2055    0.1991      4180
+weighted avg     0.2911    0.2134    0.2232      4180
