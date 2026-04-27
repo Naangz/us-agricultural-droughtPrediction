@@ -1,0 +1,47 @@
+BiLSTM Weekly Nebraska - Scenario 2B: Correlation-aware Feature Selection (Top-25)
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 25
+Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M', 'heat_dry_stress', 'PREC_lag2', 'PREC_lag1', 'PREC_lag8', 'PRECTOTCORR', 'PREC_lag4', 'D0_lag2', 'D2_lag1', 'severe_carryover_lag1', 'D4_lag2']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.8510
+Val Macro F1 (raw/tuned): 0.8510 / 0.8606
+Class multipliers: [1.198161244392395, 0.9964331388473511, 0.9212562441825867, 0.724755585193634, 0.8763200640678406, 0.6727344989776611]
+Accuracy (raw): 0.7620
+Macro F1 (raw): 0.7492
+Accuracy: 0.7689
+Macro F1: 0.7517
+Weighted F1: 0.7752
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.8510 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8477 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.6741 (balancer=NONE)
+
+Per-class F1:
+  None: 0.9041
+  D0: 0.6976
+  D1: 0.8000
+  D2: 0.7425
+  D3: 0.6404
+  D4: 0.7257
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9441    0.8674    0.9041       973
+          D0     0.6580    0.7422    0.6976       547
+          D1     0.8438    0.7605    0.8000       952
+          D2     0.8417    0.6642    0.7425      1081
+          D3     0.5162    0.8436    0.6404       473
+          D4     0.6649    0.7987    0.7257       154
+
+    accuracy                         0.7689      4180
+   macro avg     0.7448    0.7794    0.7517      4180
+weighted avg     0.7986    0.7689    0.7752      4180

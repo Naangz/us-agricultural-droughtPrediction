@@ -1,0 +1,57 @@
+BiLSTM Weekly Nebraska - Scenario 3: Macro F1-driven Feature Selection
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.7401
+Feature ranking method: Permutation Importance (macro F1 on validation)
+Subset sizes evaluated: [30, 25, 20, 15, 10]
+
+Subset evaluation results:
+  Top-15: Validation Macro F1 = 0.6685
+  Top-10: Validation Macro F1 = 0.5363
+  Top-25: Validation Macro F1 = 0.4813
+  Top-20: Validation Macro F1 = 0.4774
+  Top-30: Validation Macro F1 = 0.3665
+
+Best subset selected: Top-15 (15 features) with val macro-F1 = 0.6685
+Selected features: ['D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'D3_lag1', 'D1_lag2', 'None_lag2', 'drought_carryover_lag1', 'week_sin', 'PREC_lag2', 'PREC_roll4_std', 'severe_carryover_lag1', 'RH2M_lag8', 'PREC_roll4_mean', 'D4_lag1']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.7835
+Val Macro F1 (raw/tuned): 0.7835 / 0.7980
+Class multipliers: [1.4989957809448242, 1.2145313024520874, 1.2288269996643066, 1.1994571685791016, 0.6609528660774231, 0.7688682675361633]
+Accuracy (raw): 0.7416
+Macro F1 (raw): 0.7271
+Accuracy: 0.7627
+Macro F1: 0.7476
+Weighted F1: 0.7636
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.7835 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.7224 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.4954 (balancer=NONE)
+
+Per-class F1:
+  None: 0.9167
+  D0: 0.6287
+  D1: 0.7254
+  D2: 0.7455
+  D3: 0.7316
+  D4: 0.7375
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9415    0.8931    0.9167       973
+          D0     0.6542    0.6051    0.6287       547
+          D1     0.6857    0.7700    0.7254       952
+          D2     0.8056    0.6938    0.7455      1081
+          D3     0.6615    0.8182    0.7316       473
+          D4     0.7108    0.7662    0.7375       154
+
+    accuracy                         0.7627      4180
+   macro avg     0.7432    0.7577    0.7476      4180
+weighted avg     0.7703    0.7627    0.7636      4180

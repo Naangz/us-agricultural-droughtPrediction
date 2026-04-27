@@ -1,0 +1,47 @@
+BiLSTM Weekly Nebraska - Scenario 2A: Correlation-aware Feature Selection (Top-20)
+Best trial: none_focal_inv_cw_64x32
+Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 20
+Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M', 'heat_dry_stress', 'PREC_lag2', 'PREC_lag1', 'PREC_lag8', 'PRECTOTCORR']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.6040
+Val Macro F1 (raw/tuned): 0.6040 / 0.6424
+Class multipliers: [1.6242762804031372, 1.0400909185409546, 0.7402974367141724, 0.9676176905632019, 0.9893736243247986, 0.6640336513519287]
+Accuracy (raw): 0.5218
+Macro F1 (raw): 0.4495
+Accuracy: 0.5878
+Macro F1: 0.4942
+Weighted F1: 0.5830
+
+Trial leaderboard:
+  none_focal_inv_cw_64x32: 0.6040 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.5785 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.5094 (balancer=ROS)
+
+Per-class F1:
+  None: 0.8872
+  D0: 0.5995
+  D1: 0.5748
+  D2: 0.4458
+  D3: 0.4578
+  D4: 0.0000
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9291    0.8489    0.8872       973
+          D0     0.5805    0.6197    0.5995       547
+          D1     0.5803    0.5693    0.5748       952
+          D2     0.5071    0.3978    0.4458      1081
+          D3     0.3459    0.6765    0.4578       473
+          D4     0.0000    0.0000    0.0000       154
+
+    accuracy                         0.5878      4180
+   macro avg     0.4905    0.5187    0.4942      4180
+weighted avg     0.5947    0.5878    0.5830      4180
