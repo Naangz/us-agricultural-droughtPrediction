@@ -93,21 +93,6 @@ Interpretasi:
 - Untuk interpretabilitas fisika terkait causalitas weather-only, hasil saat ini menunjukkan sinyal weather-only tidak cukup tanpa variabel drought-memory.
 
 
-
-====================================================================
-
-
-Permintaan bagus. Berikut change log per-skenario relatif terhadap Baseline 20-county.
-
-
-Script referensi Baseline:
-BiLSTM_Weekly_Kansas_Clean.py
-
-
-Output Baseline utama:
-results_summary.txt
-
-
 **1. Baseline (20 counties)**
 Script: BiLSTM_Weekly_Kansas_Clean.py  
 Output: results_summary.txt
@@ -387,12 +372,6 @@ Perubahan:
 
 
 ---
-
-
-====================================================================
-
-
-Ringkasan matriks skenario yang diminta.
 
 
 **A. Change Matrix (relatif terhadap Baseline 20-county)**
