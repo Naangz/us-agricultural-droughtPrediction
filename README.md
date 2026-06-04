@@ -1,4 +1,33 @@
-# BiLSTM Weekly Drought Classification (Kansas 20 Counties)
+# BiLSTM Weekly Drought Classification (Kansas - Nebraska 20 Counties)
+
+Project description: This repository implements a Bi-directional LSTM (BiLSTM) sequence classifier to predict weekly drought categories for Kansas counties. It uses the previous 52 weeks of county-level weather and drought history to output one of six drought classes (None, D0..D4). The repo includes data integration scripts, feature engineering, model training/evaluation (`BiLSTM_Weekly_Kansas_Clean.py`), scenario experiments, and output analysis.
+
+## Statement of the Problem
+
+Accurate weekly monitoring and short-term prediction of drought severity at the county level is essential for agricultural planning and resource allocation. Existing operational drought indicators are often descriptive and lag actual hydrometeorological conditions; there is a need for a data-driven model that leverages historical weather and drought persistence signals to predict the categorical drought state one week ahead. This work addresses the problem of mapping 52 weeks of historical county-level weather and USDM-derived drought signals to a single weekly drought class.
+
+## Objectives
+
+- **Primary:** Build and validate a BiLSTM sequence classifier that predicts the weekly drought class (None, D0..D4) for Kansas counties using the previous 52 weeks of features.
+- **Secondary:** Engineer robust temporal features and drought-memory signals, compare balancing and loss strategies (e.g., ROS, focal loss), tune model/configuration by validation macro-F1, and produce reproducible training and evaluation artifacts for an undergraduate final-year project.
+
+## Scope and Limitations
+
+- **Geographic scope:** Model and experiments are limited to a fixed set of 20 Kansas counties (see `Integrated_weekly_KAN_20counties.csv`).
+- **Temporal scope:** Uses weekly-aggregated NASA POWER weather and USDM weekly drought coverage covering ~2010–2025 as available in the repository.
+- **Inputs & outputs:** Inputs are historical weather and cumulative USDM coverage features; output is a single categorical drought class per county-week. The model does not perform causal attribution or hydrological simulation.
+- **Limitations:** Labels derive from USDM coverage and include aggregation/measurement noise; class imbalance and temporal non-stationarity can affect generalization; spatial transferability beyond the selected counties is not evaluated; model predictions are not real-time operational products and require additional validation for deployment.
+- **Resource assumptions:** Training experiments assume access to a moderately capable workstation (GPU recommended for faster runs) and the Python dependencies listed in `requirements.txt`.
+
+## Why Kansas and Nebraska?
+
+This repository contains experiments for two nearby U.S. states (Kansas and Nebraska) to demonstrate the model's spatial generalization potential. The Kansas dataset (20 counties) is the primary development and evaluation corpus used for the undergraduate final project, while the Nebraska scripts and example outputs are provided to:
+
+- show how the same pipeline and model architecture can be applied to a different but climatically related region,
+- provide a simple transfer / generalization check (retrain or fine-tune on Nebraska data to compare performance), and
+- surface limitations due to differing label distributions, county selections, and local climate regimes.
+
+Note: Nebraska experiments are intended as illustrative transfer tests rather than fully tuned, production-ready models. Successful generalization requires careful retraining, calibration, and evaluation on region-specific data.
 
 ## What This Model Does
 This project predicts **weekly drought category** for Kansas counties using weather history and drought persistence signals.
