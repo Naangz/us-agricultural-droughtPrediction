@@ -1,0 +1,47 @@
+BiLSTM Weekly Nebraska - Scenario 2: Correlation-aware Feature Selection
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 15
+Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.6092
+Val Macro F1 (raw/tuned): 0.6092 / 0.6805
+Class multipliers: [0.9141578078269958, 0.550000011920929, 0.550000011920929, 1.4648115634918213, 1.4463998079299927, 1.7615643739700317]
+Accuracy (raw): 0.5955
+Macro F1 (raw): 0.5252
+Accuracy: 0.6007
+Macro F1: 0.5262
+Weighted F1: 0.6124
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.6092 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.5743 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.5411 (balancer=NONE)
+
+Per-class F1:
+  None: 0.9164
+  D0: 0.7099
+  D1: 0.6740
+  D2: 0.4914
+  D3: 0.1594
+  D4: 0.2061
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9320    0.9013    0.9164       973
+          D0     0.6818    0.7404    0.7099       547
+          D1     0.7032    0.6471    0.6740       952
+          D2     0.5664    0.4339    0.4914      1081
+          D3     0.2143    0.1268    0.1594       473
+          D4     0.1271    0.5455    0.2061       154
+
+    accuracy                         0.6007      4180
+   macro avg     0.5375    0.5658    0.5262      4180
+weighted avg     0.6417    0.6007    0.6124      4180

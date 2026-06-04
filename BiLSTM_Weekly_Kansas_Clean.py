@@ -234,6 +234,7 @@ def get_balancer(name, seed):
 n_steps, n_features = X_train_seq.shape[1], X_train_seq.shape[2]
 num_classes = 6
 y_val_enc = to_categorical(y_val_seq, num_classes=num_classes)
+y_test_enc = to_categorical(y_test, num_classes=num_classes)
 
 TRIAL_CONFIGS = [
     {

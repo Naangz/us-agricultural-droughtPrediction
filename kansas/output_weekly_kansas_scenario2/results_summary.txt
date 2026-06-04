@@ -1,0 +1,64 @@
+BiLSTM Weekly Kansas - Scenario 2: Correlation-aware Feature Selection
+Best trial: none_focal_inv_cw_64x32
+Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 15
+Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2']
+Selected feature ranking (correlation-aware):
+  rank | feature | max_abs_corr_with_higher_ranked_feature | compared_to
+   1 | drought_carryover_lag1 | 0.0000 | -
+   2 | D0_lag1 | 0.8999 | drought_carryover_lag1
+   3 | RH2M_lag8 | 0.3895 | drought_carryover_lag1
+   4 | T2M | 0.1544 | RH2M_lag8
+   5 | RH2M | 0.3507 | T2M
+   6 | RH2M_lag4 | 0.4540 | RH2M_lag8
+   7 | PREC_roll12_std | 0.3903 | D0_lag1
+   8 | PREC_roll4_mean | 0.6265 | PREC_roll12_std
+   9 | RH2M_lag2 | 0.5160 | RH2M_lag4
+  10 | T2M_roll12_mean | 0.6702 | T2M
+  11 | ALLSKY_SFC_SW_DWN | 0.8672 | T2M
+  12 | RH2M_lag1 | 0.6639 | RH2M_lag2
+  13 | PREC_roll12_mean | 0.8350 | PREC_roll12_std
+  14 | PRECTOTCORR | 0.3856 | T2M
+  15 | PREC_lag2 | 0.7075 | PREC_roll4_mean
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.6280
+Val Macro F1 (raw/tuned): 0.6280 / 0.6723
+Class multipliers: [0.817325234413147, 0.6373645067214966, 0.6014405488967896, 1.0359293222427368, 1.1830425262451172, 1.1413158178329468]
+Accuracy (raw): 0.5242
+Macro F1 (raw): 0.4360
+Accuracy: 0.5184
+Macro F1: 0.4460
+Weighted F1: 0.5294
+
+Trial leaderboard:
+  none_focal_inv_cw_64x32: 0.6280 (balancer=NONE)
+  ros_focal_inv_no_cw_128x64: 0.5277 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.5117 (balancer=ROS)
+
+Per-class F1:
+  None: 0.8070
+  D0: 0.5604
+  D1: 0.4695
+  D2: 0.2277
+  D3: 0.2633
+  D4: 0.3483
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9123    0.7235    0.8070      1150
+          D0     0.5529    0.5682    0.5604       975
+          D1     0.5006    0.4420    0.4695       948
+          D2     0.4265    0.1554    0.2277       560
+          D3     0.2072    0.3611    0.2633       288
+          D4     0.2365    0.6602    0.3483       259
+
+    accuracy                         0.5184      4180
+   macro avg     0.4727    0.4851    0.4460      4180
+weighted avg     0.5795    0.5184    0.5294      4180

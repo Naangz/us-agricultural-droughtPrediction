@@ -1,0 +1,47 @@
+BiLSTM Weekly Kansas - Scenario 2B: Correlation-aware Feature Selection (Top-25)
+Best trial: ros_focal_inv_no_cw_128x64
+Best trial config: {'name': 'ros_focal_inv_no_cw_128x64', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (128, 64), 'dropout': 0.28, 'dense_units': 96, 'lr': 0.0006, 'patience': 14}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 25
+Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2', 'PREC_lag1', 'PREC_lag4', 'PREC_roll4_std', 'WS2M', 'PS', 'PREC_lag8', 'D2_lag1', 'severe_carryover_lag1', 'D4_lag1', 'week_sin']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.8429
+Val Macro F1 (raw/tuned): 0.8429 / 0.8458
+Class multipliers: [1.3236652612686157, 1.1251791715621948, 1.148370385169983, 1.1008553504943848, 0.9450979232788086, 0.8066497445106506]
+Accuracy (raw): 0.7854
+Macro F1 (raw): 0.7895
+Accuracy: 0.7940
+Macro F1: 0.8014
+Weighted F1: 0.7932
+
+Trial leaderboard:
+  ros_focal_inv_no_cw_128x64: 0.8429 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.8380 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.8024 (balancer=NONE)
+
+Per-class F1:
+  None: 0.9054
+  D0: 0.7305
+  D1: 0.7072
+  D2: 0.7666
+  D3: 0.7717
+  D4: 0.9267
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9081    0.9026    0.9054      1150
+          D0     0.6914    0.7744    0.7305       975
+          D1     0.7654    0.6572    0.7072       948
+          D2     0.7619    0.7714    0.7666       560
+          D3     0.7870    0.7569    0.7717       288
+          D4     0.8815    0.9768    0.9267       259
+
+    accuracy                         0.7940      4180
+   macro avg     0.7992    0.8066    0.8014      4180
+weighted avg     0.7956    0.7940    0.7932      4180

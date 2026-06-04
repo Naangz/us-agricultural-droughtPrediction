@@ -1,0 +1,60 @@
+BiLSTM Weekly Nebraska Tuned (20 counties)
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': True, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+Val Macro F1 (best trial): 0.3156
+Val Macro F1 (raw/tuned): 0.3156 / 0.3183
+Class multipliers: [0.9987471699714661, 0.8659706115722656, 0.8903961777687073, 0.83596271276474, 1.640679955482483, 0.8019959330558777]
+Selected features:
+  ALLSKY_SFC_SW_DWN
+  PRECTOTCORR
+  PS
+  RH2M
+  T2M
+  WS2M
+  PREC_lag1
+  PREC_lag2
+  PREC_lag4
+  PREC_lag8
+  T2M_lag1
+  T2M_lag2
+  T2M_lag4
+  T2M_lag8
+  RH2M_lag1
+  RH2M_lag2
+  RH2M_lag4
+  RH2M_lag8
+  week_sin
+  week_cos
+Accuracy (raw): 0.3079
+Macro F1 (raw): 0.2680
+Accuracy: 0.3383
+Macro F1: 0.2709
+Weighted F1: 0.3013
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.3156 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.2695 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.2576 (balancer=NONE)
+
+Per-class F1:
+  None: 0.5704
+  D0: 0.2612
+  D1: 0.3129
+  D2: 0.0594
+  D3: 0.4215
+  D4: 0.0000
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.4955    0.6721    0.5704       973
+          D0     0.2020    0.3693    0.2612       547
+          D1     0.3474    0.2847    0.3129       952
+          D2     0.1100    0.0407    0.0594      1081
+          D3     0.3574    0.5137    0.4215       473
+          D4     0.0000    0.0000    0.0000       154
+
+    accuracy                         0.3383      4180
+   macro avg     0.2520    0.3134    0.2709      4180
+weighted avg     0.2898    0.3383    0.3013      4180

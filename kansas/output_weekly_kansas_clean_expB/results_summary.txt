@@ -1,0 +1,28 @@
+BiLSTM Weekly Kansas Clean Baseline
+Balancing: ROS
+Seq Length: 52
+Accuracy: 0.6774
+Macro F1: 0.7303
+Weighted F1: 0.6818
+
+Per-class F1:
+  None: 0.6352
+  D0: 0.5721
+  D1: 0.7602
+  D2: 0.7223
+  D3: 0.7775
+  D4: 0.9147
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.7439    0.5542    0.6352      4361
+          D0     0.4868    0.6937    0.5721      3673
+          D1     0.7785    0.7427    0.7602      3444
+          D2     0.8375    0.6349    0.7223      1534
+          D3     0.7779    0.7770    0.7775       861
+          D4     0.8736    0.9598    0.9147       821
+
+    accuracy                         0.6774     14694
+   macro avg     0.7497    0.7271    0.7303     14694
+weighted avg     0.7068    0.6774    0.6818     14694

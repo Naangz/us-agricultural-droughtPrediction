@@ -1,0 +1,47 @@
+BiLSTM Weekly Kansas - Scenario 2A: Correlation-aware Feature Selection (Top-20)
+Best trial: none_focal_inv_cw_64x32
+Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Seq Length: 52
+
+--- FEATURE SELECTION ---
+Baseline feature count: 41
+Correlation threshold: 0.9
+Final selected feature count: 20
+Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2', 'PREC_lag1', 'PREC_lag4', 'PREC_roll4_std', 'WS2M', 'PS']
+
+--- RESULTS ---
+Val Macro F1 (best trial): 0.6663
+Val Macro F1 (raw/tuned): 0.6663 / 0.7818
+Class multipliers: [0.817325234413147, 0.6373645067214966, 0.6014405488967896, 1.0359293222427368, 1.1830425262451172, 1.1413158178329468]
+Accuracy (raw): 0.5278
+Macro F1 (raw): 0.4243
+Accuracy: 0.5313
+Macro F1: 0.4376
+Weighted F1: 0.5536
+
+Trial leaderboard:
+  none_focal_inv_cw_64x32: 0.6663 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.6067 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.5435 (balancer=ROS)
+
+Per-class F1:
+  None: 0.8322
+  D0: 0.6440
+  D1: 0.4994
+  D2: 0.2693
+  D3: 0.2114
+  D4: 0.1691
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.9209    0.7591    0.8322      1150
+          D0     0.6109    0.6810    0.6440       975
+          D1     0.6138    0.4209    0.4994       948
+          D2     0.3912    0.2054    0.2693       560
+          D3     0.1457    0.3854    0.2114       288
+          D4     0.1344    0.2278    0.1691       259
+
+    accuracy                         0.5313      4180
+   macro avg     0.4695    0.4466    0.4376      4180
+weighted avg     0.6058    0.5313    0.5536      4180
