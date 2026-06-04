@@ -8,40 +8,57 @@ Baseline feature count: 41
 Correlation threshold: 0.9
 Final selected feature count: 15
 Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2']
+Selected feature ranking (correlation-aware):
+  rank | feature | max_abs_corr_with_higher_ranked_feature | compared_to
+   1 | drought_carryover_lag1 | 0.0000 | -
+   2 | D0_lag1 | 0.8999 | drought_carryover_lag1
+   3 | RH2M_lag8 | 0.3895 | drought_carryover_lag1
+   4 | T2M | 0.1544 | RH2M_lag8
+   5 | RH2M | 0.3507 | T2M
+   6 | RH2M_lag4 | 0.4540 | RH2M_lag8
+   7 | PREC_roll12_std | 0.3903 | D0_lag1
+   8 | PREC_roll4_mean | 0.6265 | PREC_roll12_std
+   9 | RH2M_lag2 | 0.5160 | RH2M_lag4
+  10 | T2M_roll12_mean | 0.6702 | T2M
+  11 | ALLSKY_SFC_SW_DWN | 0.8672 | T2M
+  12 | RH2M_lag1 | 0.6639 | RH2M_lag2
+  13 | PREC_roll12_mean | 0.8350 | PREC_roll12_std
+  14 | PRECTOTCORR | 0.3856 | T2M
+  15 | PREC_lag2 | 0.7075 | PREC_roll4_mean
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.5638
-Val Macro F1 (raw/tuned): 0.5638 / 0.6702
-Class multipliers: [1.2030627727508545, 0.550000011920929, 0.5721477270126343, 0.9192289710044861, 1.5919619798660278, 0.8774642944335938]
-Accuracy (raw): 0.5368
-Macro F1 (raw): 0.4289
-Accuracy: 0.5433
-Macro F1: 0.4165
-Weighted F1: 0.5346
+Val Macro F1 (best trial): 0.6280
+Val Macro F1 (raw/tuned): 0.6280 / 0.6723
+Class multipliers: [0.817325234413147, 0.6373645067214966, 0.6014405488967896, 1.0359293222427368, 1.1830425262451172, 1.1413158178329468]
+Accuracy (raw): 0.5242
+Macro F1 (raw): 0.4360
+Accuracy: 0.5184
+Macro F1: 0.4460
+Weighted F1: 0.5294
 
 Trial leaderboard:
-  none_focal_inv_cw_64x32: 0.5638 (balancer=NONE)
-  ros_focal_inv_no_cw_128x64: 0.5510 (balancer=ROS)
-  ros_focal_no_cw_96x48: 0.5313 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.6280 (balancer=NONE)
+  ros_focal_inv_no_cw_128x64: 0.5277 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.5117 (balancer=ROS)
 
 Per-class F1:
-  None: 0.8508
-  D0: 0.5986
-  D1: 0.5162
-  D2: 0.1182
-  D3: 0.3295
-  D4: 0.0854
+  None: 0.8070
+  D0: 0.5604
+  D1: 0.4695
+  D2: 0.2277
+  D3: 0.2633
+  D4: 0.3483
 
 Classification Report:
               precision    recall  f1-score   support
 
-        None     0.8693    0.8330    0.8508      1150
-          D0     0.6250    0.5744    0.5986       975
-          D1     0.5397    0.4947    0.5162       948
-          D2     0.5606    0.0661    0.1182       560
-          D3     0.2076    0.7986    0.3295       288
-          D4     0.1223    0.0656    0.0854       259
+        None     0.9123    0.7235    0.8070      1150
+          D0     0.5529    0.5682    0.5604       975
+          D1     0.5006    0.4420    0.4695       948
+          D2     0.4265    0.1554    0.2277       560
+          D3     0.2072    0.3611    0.2633       288
+          D4     0.2365    0.6602    0.3483       259
 
-    accuracy                         0.5433      4180
-   macro avg     0.4874    0.4721    0.4165      4180
-weighted avg     0.6043    0.5433    0.5346      4180
+    accuracy                         0.5184      4180
+   macro avg     0.4727    0.4851    0.4460      4180
+weighted avg     0.5795    0.5184    0.5294      4180
