@@ -2,38 +2,66 @@ BiLSTM Weekly Kansas Tuned (20 counties)
 Best trial: ros_focal_no_cw_96x48
 Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52
-Val Macro F1 (best trial): 0.8514
-Val Macro F1 (raw/tuned): 0.8514 / 0.8553
-Class multipliers: [1.7999999523162842, 1.7999999523162842, 1.1323813199996948, 0.7431469559669495, 0.550000011920929, 1.083626627922058]
-Accuracy (raw): 0.8089
-Macro F1 (raw): 0.8137
-Accuracy: 0.8067
-Macro F1: 0.8039
-Weighted F1: 0.8061
+Val Macro F1 (best trial): 0.8502
+Val Macro F1 (raw/tuned): 0.8502 / 0.8514
+Class multipliers: [1.3817163705825806, 1.0090094804763794, 1.0259101390838623, 0.6375690698623657, 0.550000011920929, 1.455823302268982]
+Accuracy (raw): 0.8112
+Macro F1 (raw): 0.8205
+Weighted F1 (raw): 0.8119
+Accuracy: 0.8100
+Macro F1: 0.7915
+Weighted F1: 0.8077
+
+Epoch 30: early stopping
+Restoring model weights from the end of the best epoch: 16.
+Trial ros_focal_inv_no_cw_128x64 val macro-F1: 0.8429
+
+Trial leaderboard (by validation macro-F1):
+  ros_focal_no_cw_96x48: 0.8502 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8429 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.8344 (balancer=NONE)
+
+Best trial: ros_focal_no_cw_96x48 with val macro-F1 0.8502
+
+Class multiplier calibration (from validation only):
+  raw val macro-F1:   0.8502
+  tuned val macro-F1: 0.8514
+  multipliers: [1.3817164  1.0090095  1.0259101  0.63756907 0.55       1.4558233 ]
 
 Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.8514 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.8436 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.8368 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.8502 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8429 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.8344 (balancer=NONE)
 
 Per-class F1:
-  None: 0.8977
-  D0: 0.7614
-  D1: 0.7435
-  D2: 0.8028
-  D3: 0.7348
-  D4: 0.8835
+  None: 0.9022
+  D0: 0.7481
+  D1: 0.7917
+  D2: 0.8032
+  D3: 0.6680
+  D4: 0.8358
 
-Classification Report:
+======================================================================
+CLASSIFICATION REPORT
+======================================================================
               precision    recall  f1-score   support
 
-        None     0.9229    0.8739    0.8977      1150
-          D0     0.6921    0.8462    0.7614       975
-          D1     0.8288    0.6741    0.7435       948
-          D2     0.7817    0.8250    0.8028       560
-          D3     0.8462    0.6493    0.7348       288
-          D4     0.8038    0.9807    0.8835       259
+        None     0.9018    0.9026    0.9022      1150
+          D0     0.7834    0.7159    0.7481       975
+          D1     0.7620    0.8238    0.7917       948
+          D2     0.8011    0.8054    0.8032       560
+          D3     0.8299    0.5590    0.6680       288
+          D4     0.7219    0.9923    0.8358       259
 
-    accuracy                         0.8067      4180
-   macro avg     0.8126    0.8082    0.8039      4180
-weighted avg     0.8161    0.8067    0.8061      4180
+    accuracy                         0.8100      4180
+   macro avg     0.8000    0.7998    0.7915      4180
+weighted avg     0.8129    0.8100    0.8077      4180
+
+======================================================================
+Accuracy (raw):    0.8112
+Macro F1 (raw):    0.8205
+Weighted F1 (raw): 0.8119
+Accuracy:    0.8100
+Macro F1:    0.7915
+Weighted F1: 0.8077
+======================================================================

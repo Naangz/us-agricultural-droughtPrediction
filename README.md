@@ -29,6 +29,13 @@ This repository contains experiments for two nearby U.S. states (Kansas and Nebr
 
 Note: Nebraska experiments are intended as illustrative transfer tests rather than fully tuned, production-ready models. Successful generalization requires careful retraining, calibration, and evaluation on region-specific data.
 
+This repository is an academic, undergraduate final-year project that emphasizes reproducible ML research and practical transferability rather than being a packaged, high-traffic open-source library. Relevant qualifying points:
+
+- **Reproducible pipeline:** Includes raw sources, integration scripts, feature engineering, training, evaluation, and model checkpoints so reviewers can reproduce experiments end-to-end.
+- **Clear evaluation:** Provides a temporal train/val/test split, a macro-F1 selection metric, and generated artifacts (confusion matrices, per-class F1, training history) that support objective assessment.
+- **Educational and research value:** Presents a complete case study — data integration, feature design, sequence modeling, and calibration — suitable for students, instructors, and researchers to learn from or extend.
+- **Extensible to other regions:** Separate Kansas and Nebraska scripts demonstrate portability of the pipeline and how to perform simple transfer/generalization checks.
+
 ## What This Model Does
 This project predicts **weekly drought category** for Kansas counties using weather history and drought persistence signals.
 
