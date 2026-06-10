@@ -143,9 +143,4 @@
 
 ---
 
-If you'd like, I can now:
-- (A) Update `ANALYSIS_SCENARIOS.md` with these details inline, or
-- (B) Generate a CSV or markdown table comparing key metrics across scenarios, or
-- (C) Produce per-county breakdowns and visualizations from the per-scenario outputs.
 
-Tell me which next step you prefer and I'll continue.
