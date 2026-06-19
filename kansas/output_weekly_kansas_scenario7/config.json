@@ -1,0 +1,35 @@
+{
+    "max_sequence_length": 52,
+    "feature_cols": [
+        "None_lag1",
+        "D0_lag1",
+        "D1_lag1",
+        "D2_lag1",
+        "D3_lag1",
+        "D4_lag1",
+        "None_lag2",
+        "D0_lag2",
+        "D1_lag2",
+        "D2_lag2",
+        "D3_lag2",
+        "D4_lag2",
+        "drought_carryover_lag1",
+        "severe_carryover_lag1"
+    ],
+    "label_map": {
+        "0": "None",
+        "1": "D0",
+        "2": "D1",
+        "3": "D2",
+        "4": "D3",
+        "5": "D4"
+    },
+    "class_multipliers": [
+        1.207961916923523,
+        1.223846435546875,
+        0.7576390504837036,
+        0.6850662231445312,
+        0.981194794178009,
+        1.2741920948028564
+    ]
+}
