@@ -133,7 +133,7 @@ feature_cols = [
     'week_sin', 'week_cos',
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
     'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1', 'severe_carryover_lag1', 'heat_dry_stress'
+    'heat_dry_stress'
 ]
 
 before_drop = len(df_fe)
