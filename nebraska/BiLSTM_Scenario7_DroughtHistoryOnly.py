@@ -129,9 +129,9 @@ df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
-    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1',
-    'severe_carryover_lag1'
+    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2'
+    #'drought_carryover_lag1',
+    #'severe_carryover_lag1'
 ]
 
 print('='*60)
@@ -553,6 +553,17 @@ plt.savefig(f'{OUTPUT_FOLDER}/confusion_matrix.png', dpi=140)
 plt.show()
 
 per_class_f1 = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
+
+# Compute per-class accuracy (recall) for both tuned and raw predictions
+per_class_acc = []
+per_class_acc_raw = []
+for i in range(num_classes):
+    total = np.sum(y_test == i)
+    acc = np.sum((y_test == i) & (y_pred == i)) / total if total > 0 else 0.0
+    acc_raw = np.sum((y_test == i) & (y_pred_raw == i)) / total if total > 0 else 0.0
+    per_class_acc.append(acc)
+    per_class_acc_raw.append(acc_raw)
+
 fig, ax = plt.subplots(figsize=(10, 5))
 bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1)
 for bar, val in zip(bars, per_class_f1):
@@ -591,6 +602,12 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write('Per-class F1:\n')
     for i in range(num_classes):
         f.write(f'  {label_map[i]}: {per_class_f1[i]:.4f}\n')
+    f.write('\nPer-class Accuracy:\n')
+    for i in range(num_classes):
+        f.write(f'  {label_map[i]}: {per_class_acc[i]:.4f}\n')
+    f.write('\nPer-class Accuracy (raw):\n')
+    for i in range(num_classes):
+        f.write(f'  {label_map[i]}: {per_class_acc_raw[i]:.4f}\n')
     f.write('\nClassification Report:\n')
     f.write(report)
 
