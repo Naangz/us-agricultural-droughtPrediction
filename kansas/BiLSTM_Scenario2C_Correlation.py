@@ -173,6 +173,11 @@ print('=' * 80)
 print('\n1. Computing mutual information on train set...')
 mi_scores = mutual_info_classif(train_df[feature_cols], train_df['Label'], random_state=SEED)
 mi_ranking = np.argsort(-mi_scores)
+mi_scores_df = pd.DataFrame({
+    'feature': feature_cols,
+    'mutual_information_score': mi_scores,
+}).sort_values('mutual_information_score', ascending=False).reset_index(drop=True)
+mi_scores_df.insert(0, 'rank', np.arange(1, len(mi_scores_df) + 1))
 
 print(f'\nTop 20 features by mutual information:')
 for rank, idx in enumerate(mi_ranking[:20], 1):
@@ -233,6 +238,20 @@ if len(pruned_pairs) > 10:
     print(f'  ... and {len(pruned_pairs) - 10} more')
 
 feature_cols_corr = selected_features
+corr_all_csv_path = f'{OUTPUT_FOLDER}/feature_feature_abs_correlation_all.csv'
+corr_selected_csv_path = f'{OUTPUT_FOLDER}/feature_feature_abs_correlation_selected.csv'
+mi_scores_csv_path = f'{OUTPUT_FOLDER}/feature_model_mutual_information.csv'
+selected_ranking_csv_path = f'{OUTPUT_FOLDER}/selected_feature_ranking.csv'
+pruned_pairs_csv_path = f'{OUTPUT_FOLDER}/pruned_feature_pairs.csv'
+
+corr_matrix.to_csv(corr_all_csv_path, index=True)
+corr_matrix.loc[feature_cols_corr, feature_cols_corr].to_csv(corr_selected_csv_path, index=True)
+mi_scores_df.to_csv(mi_scores_csv_path, index=False)
+selected_feature_ranking_df = pd.DataFrame(selected_feature_ranking)
+selected_feature_ranking_df.insert(0, 'rank', np.arange(1, len(selected_feature_ranking_df) + 1))
+selected_feature_ranking_df.to_csv(selected_ranking_csv_path, index=False)
+pd.DataFrame(pruned_pairs, columns=['feature_dropped', 'feature_kept', 'abs_correlation']).to_csv(pruned_pairs_csv_path, index=False)
+
 print(f'\n4. Final selected features (count={len(feature_cols_corr)}):')
 for i, feat in enumerate(feature_cols_corr, 1):
     print(f'  {i:2d}. {feat}')
@@ -664,14 +683,19 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'\n--- FEATURE SELECTION ---\n')
     f.write(f'Baseline feature count: 41\n')
     f.write(f'Correlation threshold: {CORRELATION_THRESHOLD}\n')
+    f.write(f'Feature-model CSV (mutual information): {mi_scores_csv_path}\n')
+    f.write(f'Feature-feature CSV (all abs correlations): {corr_all_csv_path}\n')
+    f.write(f'Feature-feature CSV (selected abs correlations): {corr_selected_csv_path}\n')
+    f.write(f'Selected ranking CSV: {selected_ranking_csv_path}\n')
+    f.write(f'Pruned pairs CSV: {pruned_pairs_csv_path}\n')
     f.write(f'Final selected feature count: {len(feature_cols_corr)}\n')
     f.write(f'Selected features: {feature_cols_corr}\n')
     f.write('Selected feature ranking (correlation-aware):\n')
-    f.write('  rank | feature | max_abs_corr_with_higher_ranked_feature | compared_to\n')
+    f.write('  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to\n')
     for rank, row in enumerate(selected_feature_ranking, 1):
         anchor = row['max_corr_prev_feat'] if row['max_corr_prev_feat'] is not None else '-'
         f.write(
-            f"  {rank:2d} | {row['feature']} | {row['max_abs_corr_prev']:.4f} | {anchor}\n"
+            f"  {rank:2d} | {row['feature']} | {row['mi_score']:.6f} | {row['max_abs_corr_prev']:.4f} | {anchor}\n"
         )
     f.write(f'\n--- RESULTS ---\n')
     f.write(f'Val Macro F1 (best trial): {best_val_macro_f1:.4f}\n')
@@ -692,4 +716,7 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write('\nClassification Report:\n')
     f.write(report)
 
+print(f'Feature-model mutual information saved to {mi_scores_csv_path}')
+print(f'Feature-feature correlation matrix saved to {corr_all_csv_path}')
+print(f'Selected-feature correlation matrix saved to {corr_selected_csv_path}')
 print(f'Results saved to {summary_path}')

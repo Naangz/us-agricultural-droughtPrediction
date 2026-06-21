@@ -1,0 +1,9 @@
+region,scenario,output_folder,feature_model_mutual_information,selected_feature_ranking,pruned_feature_pairs,feature_feature_abs_correlation_selected
+Kansas,Scenario 2,kansas/output_weekly_kansas_scenario2,missing,missing,missing,missing
+Kansas,Scenario 2A,kansas/output_weekly_kansas_scenario2A,missing,missing,missing,missing
+Kansas,Scenario 2B,kansas/output_weekly_kansas_scenario2B,missing,missing,missing,missing
+Kansas,Scenario 2C,kansas/output_weekly_kansas_scenario2C,missing,missing,missing,missing
+Nebraska,Scenario 2,nebraska/output_weekly_nebraska_scenario2,missing,missing,missing,missing
+Nebraska,Scenario 2A,nebraska/output_weekly_nebraska_scenario2A,missing,missing,missing,missing
+Nebraska,Scenario 2B,nebraska/output_weekly_nebraska_scenario2B,missing,missing,missing,missing
+Nebraska,Scenario 2C,nebraska/output_weekly_nebraska_scenario2C,missing,missing,missing,missing

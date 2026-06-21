@@ -457,6 +457,18 @@ permutation_importance = compute_permutation_importance(
 )
 
 sorted_importance = sorted(permutation_importance.items(), key=lambda x: x[1], reverse=True)
+importance_df = pd.DataFrame(
+    [
+        {
+            'rank': rank,
+            'feature': feat_name,
+            'permutation_importance': float(importance),
+        }
+        for rank, (feat_name, importance) in enumerate(sorted_importance, 1)
+    ]
+)
+importance_csv_path = f'{OUTPUT_FOLDER}/permutation_importance.csv'
+importance_df.to_csv(importance_csv_path, index=False)
 print(f'\nTop 20 features by permutation importance:')
 for rank, (feat_name, importance) in enumerate(sorted_importance[:20], 1):
     print(f'  {rank:2d}. {feat_name:30s} Importance={importance:.6f}')
@@ -782,7 +794,12 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'Baseline feature count: 41\n')
     f.write(f'Baseline model (for ranking): {baseline_cfg["name"]}, val macro-F1: {baseline_val_f1:.4f}\n')
     f.write(f'Feature ranking method: Permutation Importance (macro F1 on validation)\n')
+    f.write(f'Permutation importance CSV: {importance_csv_path}\n')
     f.write(f'Subset sizes evaluated: {SUBSET_SIZES}\n')
+    f.write('\nPermutation importance ranking:\n')
+    f.write('  rank | feature | importance\n')
+    for row in importance_df.itertuples(index=False):
+        f.write(f'  {row.rank:2d} | {row.feature} | {row.permutation_importance:.6f}\n')
     f.write(f'\nSubset evaluation results:\n')
     for result in sorted(subset_results, key=lambda x: x['val_f1'], reverse=True):
         f.write(f'  Top-{result["size"]:2d}: Validation Macro F1 = {result["val_f1"]:.4f}\n')
@@ -807,4 +824,5 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write('\nClassification Report:\n')
     f.write(report)
 
+print(f'Permutation importance saved to {importance_csv_path}')
 print(f'Results saved to {summary_path}')

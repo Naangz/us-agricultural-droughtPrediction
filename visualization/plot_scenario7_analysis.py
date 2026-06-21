@@ -13,6 +13,7 @@ Jalankan dari folder root project:
 """
 
 import os
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -25,27 +26,20 @@ except ImportError:
     HAS_SNS = False
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. DATA — Skenario 7 (Drought History Only)
+# 1. DATA — Skenario 7 (Drought History Only), dibaca dari hasil training aktual
 # ─────────────────────────────────────────────────────────────────────────────
 
 CLASSES = ['None', 'D0', 'D1', 'D2', 'D3', 'D4']
 N_CLASSES = 6
 
-# ── Kansas Skenario 7 ────────────────────────────────────────────────────────
-KS_SC7_F1        = [0.9082, 0.7795, 0.7943, 0.7255, 0.7254, 0.9180]
-KS_SC7_MACRO     = 0.8085
-KS_SC7_PRECISION = [0.9001, 0.7573, 0.8324, 0.8265, 0.6361, 0.8690]
-KS_SC7_RECALL    = [0.9165, 0.8031, 0.7595, 0.6464, 0.8438, 0.9730]
-KS_SC7_SUPPORT   = [1150, 975, 948, 560, 288, 259]   # aktual
-KS_SC7_TOTAL     = sum(KS_SC7_SUPPORT)               # 4180
-
-# ── Nebraska Skenario 7 ──────────────────────────────────────────────────────
-NE_SC7_F1        = [0.9285, 0.7526, 0.7941, 0.8202, 0.8008, 0.8418]
-NE_SC7_MACRO     = 0.8230
-NE_SC7_PRECISION = [0.9437, 0.7143, 0.8295, 0.8393, 0.7505, 0.7790]
-NE_SC7_RECALL    = [0.9137, 0.7952, 0.7616, 0.8020, 0.8584, 0.9156]
-NE_SC7_SUPPORT   = [973, 547, 952, 1081, 473, 154]    # aktual
-NE_SC7_TOTAL     = sum(NE_SC7_SUPPORT)                # 4180
+SUMMARY_CANDIDATES = {
+    'kansas': [
+        os.path.join('kansas', 'output_weekly_kansas_scenario7', 'results_summary.txt'),
+    ],
+    'nebraska': [
+        os.path.join('nebraska', 'output_weekly_nebraska_scenario7', 'results_summary.txt'),
+    ],
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. UTILS
@@ -67,11 +61,86 @@ def compute_predicted_counts(precision_arr, recall_arr, support_arr):
             predicted.append(int(round(pred_total)))
     return predicted
 
-ks7_actual    = KS_SC7_SUPPORT
-ks7_predicted = compute_predicted_counts(KS_SC7_PRECISION, KS_SC7_RECALL, KS_SC7_SUPPORT)
+def get_summary_path(region):
+    """
+    Mengambil path hasil training Scenario 7 yang tersedia untuk suatu wilayah.
+    """
+    for candidate in SUMMARY_CANDIDATES[region]:
+        if os.path.exists(candidate):
+            return candidate
+    raise FileNotFoundError(
+        f"Tidak menemukan results_summary Scenario 7 untuk wilayah '{region}'. "
+        f"Kandidat yang dicek: {SUMMARY_CANDIDATES[region]}"
+    )
 
-ne7_actual    = NE_SC7_SUPPORT
-ne7_predicted = compute_predicted_counts(NE_SC7_PRECISION, NE_SC7_RECALL, NE_SC7_SUPPORT)
+def parse_scenario7_summary(summary_path):
+    """
+    Parse Macro F1, Per-class F1, serta precision/recall/support dari
+    results_summary.txt hasil training Scenario 7.
+    """
+    with open(summary_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    macro_matches = re.findall(r'^\s*Macro\s+F1:\s*([\d.]+)\s*$', content, flags=re.MULTILINE)
+    if not macro_matches:
+        raise ValueError(f"Gagal menemukan Macro F1 pada file: {summary_path}")
+    macro_f1 = float(macro_matches[-1])
+
+    perclass_f1 = {}
+    perclass_block_match = re.search(
+        r'Per-class F1:\s*(.*?)(?:\n\s*Per-class Accuracy:|\n\s*=|\n\s*Classification Report:)',
+        content,
+        flags=re.DOTALL
+    )
+    if perclass_block_match:
+        for cls_name, value in re.findall(r'^\s*(None|D0|D1|D2|D3|D4):\s*([\d.]+)\s*$', perclass_block_match.group(1), flags=re.MULTILINE):
+            perclass_f1[cls_name] = float(value)
+
+    class_report_rows = re.findall(
+        r'^\s*(None|D0|D1|D2|D3|D4)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+(\d+)\s*$',
+        content,
+        flags=re.MULTILINE
+    )
+    if len(class_report_rows) != N_CLASSES:
+        raise ValueError(f"Gagal parse classification report lengkap pada file: {summary_path}")
+
+    precision = []
+    recall = []
+    support = []
+    f1_scores = []
+    for cls_name in CLASSES:
+        row = next((row for row in class_report_rows if row[0] == cls_name), None)
+        if row is None:
+            raise ValueError(f"Kelas {cls_name} tidak ditemukan di classification report: {summary_path}")
+        precision.append(float(row[1]))
+        recall.append(float(row[2]))
+        f1_scores.append(perclass_f1.get(cls_name, float(row[3])))
+        support.append(int(row[4]))
+
+    predicted = compute_predicted_counts(precision, recall, support)
+    return {
+        'summary_path': summary_path,
+        'macro_f1': macro_f1,
+        'precision': precision,
+        'recall': recall,
+        'support': support,
+        'f1_scores': f1_scores,
+        'predicted': predicted,
+        'total': sum(support),
+    }
+
+def load_region_data():
+    """
+    Memuat data Scenario 7 aktual untuk Kansas dan Nebraska dari results_summary.
+    """
+    data = {}
+    for region in ['kansas', 'nebraska']:
+        summary_path = get_summary_path(region)
+        parsed = parse_scenario7_summary(summary_path)
+        data[region] = parsed
+        print(f"Memuat Scenario 7 {region.title()} dari: {summary_path}")
+        print(f"  Macro F1 = {parsed['macro_f1']:.4f}")
+    return data
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. MATPLOTLIB STYLE CONFIG
@@ -101,7 +170,7 @@ COLOR_NE = '#FF8F00'   # Amber/Orange Nebraska
 # PLOT 1 — Perbandingan F1-Score Per Kelas Antar-Wilayah (Skenario 7)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def plot_perclass_f1_comparison():
+def plot_perclass_f1_comparison(kansas_data, nebraska_data):
     fig, ax = plt.subplots(figsize=(11, 7), facecolor='#F7F9FC')
     ax.set_facecolor('#FFFFFF')
     ax.grid(axis='y', linestyle='--', alpha=0.4, color='#CCCCCC', zorder=0)
@@ -110,9 +179,11 @@ def plot_perclass_f1_comparison():
     x = np.arange(N_CLASSES)
 
     # Batang F1-Score
-    bars_ks = ax.bar(x - bar_width/2, KS_SC7_F1, bar_width, label=f'Kansas (Macro F1 = {KS_SC7_MACRO:.4f})',
+    bars_ks = ax.bar(x - bar_width/2, kansas_data['f1_scores'], bar_width,
+                     label=f'Kansas (Macro F1 = {kansas_data["macro_f1"]:.4f})',
                      color=COLOR_KS, alpha=0.88, edgecolor='white', linewidth=0.5, zorder=3)
-    bars_ne = ax.bar(x + bar_width/2, NE_SC7_F1, bar_width, label=f'Nebraska (Macro F1 = {NE_SC7_MACRO:.4f})',
+    bars_ne = ax.bar(x + bar_width/2, nebraska_data['f1_scores'], bar_width,
+                     label=f'Nebraska (Macro F1 = {nebraska_data["macro_f1"]:.4f})',
                      color=COLOR_NE, alpha=0.88, edgecolor='white', linewidth=0.5, zorder=3)
 
     # Nilai di atas tiap bar
@@ -127,10 +198,10 @@ def plot_perclass_f1_comparison():
                 )
 
     # Garis referensi Macro F1 (dashed)
-    ax.axhline(KS_SC7_MACRO, color=COLOR_KS, linestyle='--', linewidth=1.2, alpha=0.7,
-               label=f'Kansas Macro F1 Ref ({KS_SC7_MACRO:.4f})')
-    ax.axhline(NE_SC7_MACRO, color=COLOR_NE, linestyle='--', linewidth=1.2, alpha=0.7,
-               label=f'Nebraska Macro F1 Ref ({NE_SC7_MACRO:.4f})')
+    ax.axhline(kansas_data['macro_f1'], color=COLOR_KS, linestyle='--', linewidth=1.2, alpha=0.7,
+               label=f'Kansas Macro F1 Ref ({kansas_data["macro_f1"]:.4f})')
+    ax.axhline(nebraska_data['macro_f1'], color=COLOR_NE, linestyle='--', linewidth=1.2, alpha=0.7,
+               label=f'Nebraska Macro F1 Ref ({nebraska_data["macro_f1"]:.4f})')
 
     ax.set_title("Perbandingan F1-Score Per Kelas Antar-Wilayah — Skenario 7 (Drought History Only)",
                  fontsize=14, fontweight='bold', color='#1A237E', pad=15)
@@ -261,30 +332,34 @@ def main():
     print("  Visualisasi Skenario 7 (Drought History Only) — Kansas & Nebraska")
     print("=" * 65)
 
+    region_data = load_region_data()
+    kansas_data = region_data['kansas']
+    nebraska_data = region_data['nebraska']
+
     # 1. Perbandingan F1 Per Kelas
-    plot_perclass_f1_comparison()
+    plot_perclass_f1_comparison(kansas_data, nebraska_data)
 
     # 2. Distribusi Shift — Kansas Skenario 7
-    print(f"\nKansas Sc7 — Distribusi Aktual   : {dict(zip(CLASSES, ks7_actual))}")
-    print(f"Kansas Sc7 — Distribusi Prediksi  : {dict(zip(CLASSES, ks7_predicted))}")
+    print(f"\nKansas Sc7 — Distribusi Aktual   : {dict(zip(CLASSES, kansas_data['support']))}")
+    print(f"Kansas Sc7 — Distribusi Prediksi  : {dict(zip(CLASSES, kansas_data['predicted']))}")
     plot_distribution_shift(
         region_name='Kansas',
-        actual_counts=ks7_actual,
-        predicted_counts=ks7_predicted,
-        total=KS_SC7_TOTAL,
+        actual_counts=kansas_data['support'],
+        predicted_counts=kansas_data['predicted'],
+        total=kansas_data['total'],
         output_filename='scenario7_dist_shift_kansas.png',
         bar_color_actual='#1565C0',
         bar_color_pred='#FF7043',
     )
 
     # 3. Distribusi Shift — Nebraska Skenario 7
-    print(f"\nNebraska Sc7 — Distribusi Aktual  : {dict(zip(CLASSES, ne7_actual))}")
-    print(f"Nebraska Sc7 — Distribusi Prediksi: {dict(zip(CLASSES, ne7_predicted))}")
+    print(f"\nNebraska Sc7 — Distribusi Aktual  : {dict(zip(CLASSES, nebraska_data['support']))}")
+    print(f"Nebraska Sc7 — Distribusi Prediksi: {dict(zip(CLASSES, nebraska_data['predicted']))}")
     plot_distribution_shift(
         region_name='Nebraska',
-        actual_counts=ne7_actual,
-        predicted_counts=ne7_predicted,
-        total=NE_SC7_TOTAL,
+        actual_counts=nebraska_data['support'],
+        predicted_counts=nebraska_data['predicted'],
+        total=nebraska_data['total'],
         output_filename='scenario7_dist_shift_nebraska.png',
         bar_color_actual='#E65100',
         bar_color_pred='#6A1B9A',
