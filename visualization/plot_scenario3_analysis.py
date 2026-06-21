@@ -184,9 +184,11 @@ def evaluate_model_dynamically(region, data_path, model_path, selected_features,
 
 def plot_validation_trend(kansas_trend, nebraska_trend):
     """
-    Plots the line graph of Validation Macro-F1 vs Feature Subset Size.
+    Plots the bar chart of Validation Macro-F1 vs Feature Subset Size.
     """
     sizes = [10, 15, 20, 25, 30]
+    x = np.arange(len(sizes))
+    bar_width = 0.34
     
     # Extract values in correct order
     ks_y = [kansas_trend[s] for s in sizes]
@@ -204,33 +206,48 @@ def plot_validation_trend(kansas_trend, nebraska_trend):
     plt.figure(figsize=(10, 6), facecolor='#F8F9FA')
     ax = plt.subplot(1, 1, 1)
     ax.set_facecolor('#FFFFFF')
-    ax.grid(True, linestyle='--', alpha=0.5, color='#CCCCCC')
+    ax.grid(True, axis='y', linestyle='--', alpha=0.5, color='#CCCCCC')
     
-    # Plot lines
-    plt.plot(sizes, ks_y, color='#0288D1', marker='o', linewidth=3, markersize=8, label='Kansas (Macro F1-Driven)')
-    plt.plot(sizes, ne_y, color='#F57C00', marker='s', linewidth=3, markersize=8, label='Nebraska (Macro F1-Driven)')
+    # Plot grouped bars
+    ks_bars = ax.bar(
+        x - bar_width / 2, ks_y, width=bar_width, color='#0288D1',
+        edgecolor='white', linewidth=1.2, label='Kansas (Macro F1-Driven)', zorder=3
+    )
+    ne_bars = ax.bar(
+        x + bar_width / 2, ne_y, width=bar_width, color='#F57C00',
+        edgecolor='white', linewidth=1.2, label='Nebraska (Macro F1-Driven)', zorder=3
+    )
     
     # Annotate values
-    for x, y_ks, y_ne in zip(sizes, ks_y, ne_y):
-        ax.annotate(f"{y_ks:.4f}", (x, y_ks), textcoords="offset points", xytext=(-5, 12), 
-                    ha='right', fontweight='bold', color='#01579B', fontsize=9,
+    for ks_bar, ne_bar, y_ks, y_ne in zip(ks_bars, ne_bars, ks_y, ne_y):
+        ks_x = ks_bar.get_x() + ks_bar.get_width() / 2
+        ne_x = ne_bar.get_x() + ne_bar.get_width() / 2
+        ax.annotate(f"{y_ks:.4f}", (ks_x, y_ks), textcoords="offset points", xytext=(0, 10), 
+                    ha='center', fontweight='bold', color='#01579B', fontsize=9,
                     bbox=dict(boxstyle="round,pad=0.15", fc="#E1F5FE", ec="none", alpha=0.8))
-        ax.annotate(f"{y_ne:.4f}", (x, y_ne), textcoords="offset points", xytext=(5, -15), 
-                    ha='left', fontweight='bold', color='#E65100', fontsize=9,
+        ax.annotate(f"{y_ne:.4f}", (ne_x, y_ne), textcoords="offset points", xytext=(0, 10), 
+                    ha='center', fontweight='bold', color='#E65100', fontsize=9,
                     bbox=dict(boxstyle="round,pad=0.15", fc="#FFE0B2", ec="none", alpha=0.8))
         
     # Highlight Best Subsets
     # Kansas best: Top-10
-    ax.scatter([10], [kansas_trend[10]], color='red', s=200, facecolors='none', edgecolors='red', linewidths=2.5, zorder=5, label='Kansas Best (Top-10)')
+    ks_best_idx = sizes.index(10)
+    ks_bars[ks_best_idx].set_edgecolor('red')
+    ks_bars[ks_best_idx].set_linewidth(2.5)
     # Nebraska best: Top-15
-    ax.scatter([15], [nebraska_trend[15]], color='purple', s=200, facecolors='none', edgecolors='purple', linewidths=2.5, zorder=5, label='Nebraska Best (Top-15)')
+    ne_best_idx = sizes.index(15)
+    ne_bars[ne_best_idx].set_edgecolor('purple')
+    ne_bars[ne_best_idx].set_linewidth(2.5)
+
+    ax.bar([], [], color='#0288D1', edgecolor='red', linewidth=2.5, label='Kansas Best (Top-10)')
+    ax.bar([], [], color='#F57C00', edgecolor='purple', linewidth=2.5, label='Nebraska Best (Top-15)')
 
     plt.title("Tren Performa Validation Macro-F1 vs Ukuran Subset Fitur\nSkenario 3 (Seleksi Fitur Berbasis Permutation Importance)", 
               fontsize=14, fontweight='bold', color='#1A237E', pad=15)
     plt.xlabel("Ukuran Subset Fitur (Top-K Features)", labelpad=10, fontweight='bold')
     plt.ylabel("Validation Macro F1-Score", labelpad=10, fontweight='bold')
-    plt.xticks(sizes)
-    plt.xlim(8, 32)
+    plt.xticks(x, sizes)
+    plt.xlim(-0.7, len(sizes) - 0.3)
     plt.ylim(0.32, 0.88)
     plt.legend(loc='lower left', frameon=True, facecolor='#FFFFFF', edgecolor='#DDDDDD')
     

@@ -131,14 +131,14 @@ def main():
         ax.set_facecolor('#FFFFFF') # White plot area
         ax.grid(True, linestyle='--', alpha=0.5, color='#CCCCCC')
         
-        # Plot the main line
-        ax.plot(features, r['f1'], color=r['color'], marker=r['marker'], 
-                linewidth=3, markersize=8, label=r['name'], zorder=4)
+        # Plot the main bars
+        ax.bar(features, r['f1'], width=3.2, color=r['color'], alpha=0.85,
+               edgecolor='white', linewidth=1.5, label=r['name'], zorder=4)
         
         # Shaded Recovery Zone (X=20 to X=25)
         ax.axvspan(20, 25, color='#E8F5E9', alpha=0.6, label='Performance Recovery Zone', zorder=2)
         
-        # Annotate each point with its value
+        # Annotate each bar with its value
         for x, y in zip(features, r['f1']):
             ax.annotate(f"{y:.4f}", (x, y), textcoords="offset points", 
                         xytext=(0, 10), ha='center', fontweight='bold', fontsize=9.5,
