@@ -105,7 +105,6 @@ def engineer_features(df):
 
     # 5. Hand-engineered Carryovers & Stress Indicators
 
-    df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
     
     return df_fe
 

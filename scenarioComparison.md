@@ -182,7 +182,7 @@ Karena itu di `results_summary.txt` selalu ada dua versi:
 
 | Skenario | Deskripsi | Pola fitur utama |
 | --- | --- | --- |
-| Scenario 1 | Baseline | Weather dasar + lag weather + rolling stats + seasonality + drought history lag + `heat_dry_stress` |
+| Scenario 1 | Baseline | Weather dasar + lag weather + rolling stats + seasonality + drought history lag +  |
 | Scenario 2 | Correlation-aware FS Top-15 | Seleksi fitur statistik dari 41 kandidat |
 | Scenario 2A | Correlation-aware FS Top-20 | Sama seperti Scenario 2, target 20 fitur |
 | Scenario 2B | Correlation-aware FS Top-25 | Sama seperti Scenario 2, target 25 fitur |
@@ -204,7 +204,7 @@ Karena itu di `results_summary.txt` selalu ada dua versi:
   - rolling precipitation dan temperature
   - `week_sin`, `week_cos`
   - drought history `lag1` dan `lag2`
-  - `heat_dry_stress`
+  - 
 
 ### Scenario 2, 2A, 2B, 2C
 
@@ -235,7 +235,7 @@ Karena itu di `results_summary.txt` selalu ada dua versi:
 ### Scenario 6
 
 - Jumlah fitur: `27`
-- Weather dasar + lag cuaca + rolling stats + seasonality + `heat_dry_stress`
+- Weather dasar + lag cuaca + rolling stats + seasonality + 
 - Tidak ada drought history
 
 ### Scenario 7
@@ -317,7 +317,7 @@ Karena itu di `results_summary.txt` selalu ada dua versi:
 | Skenario | Hasil seleksi fitur |
 | --- | --- |
 | Scenario 2 | Top-15, dominan weather dan rolling stats: `drought_carryover_lag1`, `PREC_roll12_std`, `PREC_roll4_mean`, `RH2M_lag1`, `T2M_roll12_mean`, `RH2M_lag4` |
-| Scenario 2A | Top-20, menambah `heat_dry_stress`, `PREC_lag2`, `PREC_lag1`, `PREC_lag8`, `PRECTOTCORR` |
+| Scenario 2A | Top-20, menambah , `PREC_lag2`, `PREC_lag1`, `PREC_lag8`, `PRECTOTCORR` |
 | Scenario 2B | Top-25, menambah `PREC_lag4`, `D0_lag2`, `D2_lag1`, `severe_carryover_lag1`, `D4_lag2` |
 | Scenario 2C | Top-26, menambah `week_sin` dibanding 2B |
 | Scenario 3 | Top-15: `D2_lag1`, `None_lag1`, `D1_lag1`, `D0_lag1`, `D3_lag1`, `D1_lag2`, `None_lag2`, `drought_carryover_lag1`, `week_sin`, `PREC_lag2`, `PREC_roll4_std`, `severe_carryover_lag1`, `RH2M_lag8`, `PREC_roll4_mean`, `D4_lag1` |

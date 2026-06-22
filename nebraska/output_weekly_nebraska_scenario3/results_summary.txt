@@ -48,7 +48,6 @@ Permutation importance ranking:
   34 | T2M | -0.005349
   35 | T2M_roll12_mean | -0.007593
   36 | week_cos | -0.007830
-  37 | heat_dry_stress | -0.008123
   38 | T2M_lag8 | -0.008592
   39 | RH2M_lag1 | -0.010555
 

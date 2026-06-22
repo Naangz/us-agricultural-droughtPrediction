@@ -12,7 +12,6 @@ Feature-feature CSV (selected abs correlations): /home/kagami/Documents/enhprota
 Selected ranking CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/selected_feature_ranking.csv
 Pruned pairs CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/pruned_feature_pairs.csv
 Final selected feature count: 20
-Selected features: ['None_lag1', 'RH2M_lag8', 'T2M_lag8', 'ALLSKY_SFC_SW_DWN', 'PREC_roll12_std', 'T2M_lag1', 'RH2M_lag4', 'T2M_lag4', 'PS', 'PREC_roll4_mean', 'heat_dry_stress', 'RH2M_lag1', 'RH2M_lag2', 'PREC_roll12_mean', 'PREC_lag2', 'PREC_roll4_std', 'RH2M', 'PREC_lag8', 'WS2M', 'PRECTOTCORR']
 Selected feature ranking (correlation-aware):
   rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to
    1 | None_lag1 | 0.585075 | 0.0000 | -
@@ -25,8 +24,6 @@ Selected feature ranking (correlation-aware):
    8 | T2M_lag4 | 0.548205 | 0.8615 | T2M_lag1
    9 | PS | 0.547336 | 0.2480 | ALLSKY_SFC_SW_DWN
   10 | PREC_roll4_mean | 0.545728 | 0.7341 | PREC_roll12_std
-  11 | heat_dry_stress | 0.545130 | 0.8840 | T2M_lag1
-  12 | RH2M_lag1 | 0.544474 | 0.5189 | heat_dry_stress
   13 | RH2M_lag2 | 0.544159 | 0.6671 | RH2M_lag1
   14 | PREC_roll12_mean | 0.543106 | 0.8623 | PREC_roll12_std
   15 | PREC_lag2 | 0.542235 | 0.7067 | PREC_roll4_mean

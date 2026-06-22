@@ -47,7 +47,7 @@ Dokumen ini berisi daftar fitur yang dipakai pada semua skenario untuk semua wil
   - `drought_carryover_lag1`
   - `severe_carryover_lag1`
 - **Interaction**
-  - `heat_dry_stress`
+  - 
 
 ## Kansas
 
@@ -94,7 +94,7 @@ D1_lag2
 D2_lag2
 D3_lag2
 D4_lag2
-heat_dry_stress
+
 ```
 
 ### Scenario 2
@@ -300,7 +300,7 @@ T2M_roll4_mean
 T2M_roll12_mean
 week_sin
 week_cos
-heat_dry_stress
+
 ```
 
 ### Scenario 7
@@ -367,7 +367,7 @@ D1_lag2
 D2_lag2
 D3_lag2
 D4_lag2
-heat_dry_stress
+
 ```
 
 ### Scenario 2
@@ -412,7 +412,7 @@ RH2M
 RH2M_lag2
 T2M_roll4_mean
 WS2M
-heat_dry_stress
+
 PREC_lag2
 PREC_lag1
 PREC_lag8
@@ -439,7 +439,7 @@ RH2M
 RH2M_lag2
 T2M_roll4_mean
 WS2M
-heat_dry_stress
+
 PREC_lag2
 PREC_lag1
 PREC_lag8
@@ -471,7 +471,7 @@ RH2M
 RH2M_lag2
 T2M_roll4_mean
 WS2M
-heat_dry_stress
+
 PREC_lag2
 PREC_lag1
 PREC_lag8
@@ -577,7 +577,7 @@ T2M_roll4_mean
 T2M_roll12_mean
 week_sin
 week_cos
-heat_dry_stress
+
 ```
 
 ### Scenario 7

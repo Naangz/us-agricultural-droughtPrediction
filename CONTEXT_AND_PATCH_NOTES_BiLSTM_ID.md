@@ -324,7 +324,7 @@ Output: results_summary.txt
 
 
 Perubahan:
-- Menggunakan weather raw + lag + rolling + seasonal + heat_dry_stress.
+- Menggunakan weather raw + lag + rolling + seasonal + .
 - Menghapus semua drought history lag/carryover features.
 - Menambahkan logging dan folder output terpisah.
 - Summary menulis fitur.
@@ -336,7 +336,7 @@ Fitur (27):
 - Weather lags 12
 - Rolling stats 6
 - week_sin, week_cos
-- heat_dry_stress
+- 
 
 
 ---
@@ -419,7 +419,7 @@ Perubahan:
 - Weather lags 12  
 - Rolling: PREC_roll4_mean, PREC_roll4_std, PREC_roll12_mean, PREC_roll12_std, T2M_roll4_mean, T2M_roll12_mean  
 - week_sin, week_cos  
-- heat_dry_stress
+- 
 
 
 **Scenario 7 (Drought history only, 14 features)**  

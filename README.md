@@ -163,7 +163,7 @@ Drought memory features:
   - `severe_carryover_lag1 = D3_lag1 + D4_lag1`
 
 Interaction feature:
-- `heat_dry_stress = T2M * (1 - RH2M/100)`
+- ``
 
 Complete flat feature list used by the model (`feature_cols`):
 1. `ALLSKY_SFC_SW_DWN`
@@ -206,7 +206,7 @@ Complete flat feature list used by the model (`feature_cols`):
 38. `D4_lag2`
 39. `drought_carryover_lag1`
 40. `severe_carryover_lag1`
-41. `heat_dry_stress`
+41. 
 
 Rows with missing values in required features are dropped.
 

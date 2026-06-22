@@ -32,7 +32,6 @@ Selected features:
   T2M_roll12_mean
   week_sin
   week_cos
-  heat_dry_stress
 Accuracy (raw): 0.2031
 Macro F1 (raw): 0.1900
 Accuracy: 0.2134

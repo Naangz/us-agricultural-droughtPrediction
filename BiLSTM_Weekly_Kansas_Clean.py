@@ -117,7 +117,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
     'ALLSKY_SFC_SW_DWN', 'PRECTOTCORR', 'PS', 'RH2M', 'T2M', 'WS2M',
@@ -128,8 +127,7 @@ feature_cols = [
     'T2M_roll4_mean', 'T2M_roll12_mean',
     'week_sin', 'week_cos',
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
-    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'heat_dry_stress'
+    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
 ]
 
 before_drop = len(df_fe)

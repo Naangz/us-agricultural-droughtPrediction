@@ -44,7 +44,6 @@ Permutation importance ranking:
   30 | PREC_roll12_std | -0.001411
   31 | RH2M_lag8 | -0.001541
   32 | T2M | -0.001658
-  33 | heat_dry_stress | -0.001695
   34 | PREC_roll4_std | -0.001804
   35 | RH2M | -0.001920
   36 | PREC_roll12_mean | -0.002138

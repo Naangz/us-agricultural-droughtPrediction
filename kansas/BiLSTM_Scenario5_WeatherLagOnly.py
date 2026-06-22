@@ -123,7 +123,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
     'ALLSKY_SFC_SW_DWN', 'PRECTOTCORR', 'PS', 'RH2M', 'T2M', 'WS2M',

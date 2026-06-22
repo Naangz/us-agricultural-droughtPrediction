@@ -341,7 +341,7 @@ Output: results_summary.txt
 
 
 What changed:
-- Uses weather raw + lag + rolling + seasonal + heat_dry_stress.
+- Uses weather raw + lag + rolling + seasonal + .
 - Explicitly removes all drought history lag/carryover features.
 - Added scenario logging block.
 - Isolated output folder.
@@ -354,7 +354,7 @@ Features used (27):
 - Weather lags 12
 - Rolling stats 6
 - week_sin, week_cos
-- heat_dry_stress
+- 
 
 
 ---
@@ -447,7 +447,7 @@ Perfect. Here is the consolidated scenario matrix you asked for.
 - Weather lags 12  
 - Rolling: PREC_roll4_mean, PREC_roll4_std, PREC_roll12_mean, PREC_roll12_std, T2M_roll4_mean, T2M_roll12_mean  
 - week_sin, week_cos  
-- heat_dry_stress
+- 
 
 
 **Scenario 7 (Drought history only, 14 features)**  

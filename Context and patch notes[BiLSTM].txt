@@ -1,4 +1,4 @@
-ÔªøDetailed cross-scenario analysis is below.
+Detailed cross-scenario analysis is below.
 
 
 **1) Important comparability note**
@@ -343,7 +343,7 @@ Output: results_summary.txt
 
 
 What changed:
-- Uses weather raw + lag + rolling + seasonal + heat_dry_stress.
+- Uses weather raw + lag + rolling + seasonal + .
 - Explicitly removes all drought history lag/carryover features.
 - Added scenario logging block.
 - Isolated output folder.
@@ -356,7 +356,7 @@ Features used (27):
 - Weather lags 12
 - Rolling stats 6
 - week_sin, week_cos
-- heat_dry_stress
+- 
 
 
 ---
@@ -449,7 +449,7 @@ Perfect. Here is the consolidated scenario matrix you asked for.
 - Weather lags 12  
 - Rolling: PREC_roll4_mean, PREC_roll4_std, PREC_roll12_mean, PREC_roll12_std, T2M_roll4_mean, T2M_roll12_mean  
 - week_sin, week_cos  
-- heat_dry_stress
+- 
 
 
 **Scenario 7 (Drought history only, 14 features)**  
@@ -462,7 +462,7 @@ Perfect. Here is the consolidated scenario matrix you asked for.
 ---
 
 
-**C. Output/reporting changes in your new manual scenarios (4‚Äì7)**
+**C. Output/reporting changes in your new manual scenarios (4ñ7)**
 
 
 For each of:
@@ -483,7 +483,7 @@ you changed:
 ---
 
 
-**D. Short ‚Äúwhat differs most‚Äù summary**
+**D. Short ìwhat differs mostî summary**
 - Largest structural differences are whether drought history exists.
 - Scenario 7 keeps only drought persistence memory.
 - Scenario 6 removes all drought memory but keeps weather dynamics.
