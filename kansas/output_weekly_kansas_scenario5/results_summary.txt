@@ -37,6 +37,14 @@ Trial leaderboard:
   ros_focal_no_cw_96x48: 0.2014 (balancer=ROS)
   ros_focal_inv_no_cw_128x64: 0.1964 (balancer=ROS)
 
+Per-class F1 (raw):
+  None: 0.1603
+  D0: 0.1939
+  D1: 0.2634
+  D2: 0.0000
+  D3: 0.0643
+  D4: 0.1458
+
 Per-class F1:
   None: 0.4184
   D0: 0.0000
@@ -44,6 +52,20 @@ Per-class F1:
   D2: 0.0034
   D3: 0.1485
   D4: 0.0000
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.6562    0.0913    0.1603      1150
+          D0     0.2860    0.1467    0.1939       975
+          D1     0.2108    0.3513    0.2634       948
+          D2     0.0000    0.0000    0.0000       560
+          D3     0.0437    0.1215    0.0643       288
+          D4     0.0895    0.3938    0.1458       259
+
+    accuracy                         0.1718      4180
+   macro avg     0.2144    0.1841    0.1380      4180
+weighted avg     0.3036    0.1718    0.1625      4180
 
 Classification Report:
               precision    recall  f1-score   support

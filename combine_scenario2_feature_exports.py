@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 import csv
 
-
 ROOT = Path(__file__).resolve().parent
 
 SCENARIO_EXPORTS = [
@@ -14,8 +13,7 @@ SCENARIO_EXPORTS = [
     ("Nebraska", "Scenario 2", ROOT / "nebraska" / "output_weekly_nebraska_scenario2"),
     ("Nebraska", "Scenario 2A", ROOT / "nebraska" / "output_weekly_nebraska_scenario2A"),
     ("Nebraska", "Scenario 2B", ROOT / "nebraska" / "output_weekly_nebraska_scenario2B"),
-    ("Nebraska", "Scenario 2C", ROOT / "nebraska" / "output_weekly_nebraska_scenario2C"),
-]
+    ("Nebraska", "Scenario 2C", ROOT / "nebraska" / "output_weekly_nebraska_scenario2C")]
 
 EXPORT_FILES = {
     "feature_model_mutual_information": "feature_model_mutual_information.csv",
@@ -24,13 +22,11 @@ EXPORT_FILES = {
     "feature_feature_abs_correlation_selected": "feature_feature_abs_correlation_selected.csv",
 }
 
-
 def read_csv_rows(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
     with path.open("r", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
-
 
 def read_selected_correlation_long(path: Path) -> list[dict[str, str]]:
     if not path.exists():
@@ -62,13 +58,11 @@ def read_selected_correlation_long(path: Path) -> list[dict[str, str]]:
             )
     return long_rows
 
-
 def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, str]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-
 
 def build_status_rows() -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
@@ -82,7 +76,6 @@ def build_status_rows() -> list[dict[str, str]]:
             row[export_key] = "present" if (folder / filename).exists() else "missing"
         rows.append(row)
     return rows
-
 
 def combine_rows() -> dict[str, list[dict[str, str]]]:
     combined = {
@@ -118,7 +111,6 @@ def combine_rows() -> dict[str, list[dict[str, str]]]:
             combined["corr_selected"].append(row)
 
     return combined
-
 
 def write_summary_markdown(status_rows: list[dict[str, str]], combined: dict[str, list[dict[str, str]]]) -> None:
     summary_path = ROOT / "scenario2_feature_exports_summary.md"
@@ -159,7 +151,6 @@ def write_summary_markdown(status_rows: list[dict[str, str]], combined: dict[str
         lines.append("Belum ada data yang berhasil digabung. Jalankan ulang script Scenario 2/2A/2B/2C agar CSV ekspor baru terbentuk.")
     summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-
 def main() -> None:
     status_rows = build_status_rows()
     combined = combine_rows()
@@ -173,8 +164,7 @@ def main() -> None:
             "feature_model_mutual_information",
             "selected_feature_ranking",
             "pruned_feature_pairs",
-            "feature_feature_abs_correlation_selected",
-        ],
+            "feature_feature_abs_correlation_selected"],
         status_rows,
     )
     write_csv(
@@ -206,7 +196,6 @@ def main() -> None:
     print(" - scenario2_pruned_feature_pairs_all.csv")
     print(" - scenario2_selected_feature_correlations_all.csv")
     print(" - scenario2_feature_exports_summary.md")
-
 
 if __name__ == "__main__":
     main()

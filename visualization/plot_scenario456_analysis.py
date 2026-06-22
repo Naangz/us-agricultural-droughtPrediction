@@ -141,8 +141,7 @@ def plot_perclass_f1_comparison():
             'title': 'Wilayah Nebraska',
             'sc4': NE_SC4_F1, 'sc5': NE_SC5_F1, 'sc6': NE_SC6_F1,
             'macro4': NE_SC4_MACRO, 'macro5': NE_SC5_MACRO, 'macro6': NE_SC6_MACRO,
-        },
-    ]
+        }]
 
     for d in datasets:
         ax = d['ax']
@@ -193,7 +192,6 @@ def plot_perclass_f1_comparison():
     plt.savefig(out, dpi=300, facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.close()
     print(f"[1/3] Tersimpan: {out}")
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PLOT 2 & 3 — Pergeseran Distribusi Prediksi vs Aktual Skenario 4
@@ -290,7 +288,6 @@ def plot_distribution_shift(region_name, actual_counts, predicted_counts, total,
     plt.close()
     print(f"[{2 if 'kansas' in output_filename else 3}/3] Tersimpan: {out}")
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
@@ -330,7 +327,6 @@ def main():
     )
 
     print("\nSelesai! Semua file berhasil disimpan di folder visualization/.")
-
 
 if __name__ == '__main__':
     main()

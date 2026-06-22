@@ -126,8 +126,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['drought_carryover_lag1'] = df_fe['D0_lag1'] + df_fe['D1_lag1'] + 0.5 * df_fe['D2_lag1']
-df_fe['severe_carryover_lag1'] = df_fe['D3_lag1'] + df_fe['D4_lag1']
 df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
@@ -140,7 +138,7 @@ feature_cols = [
     'week_sin', 'week_cos',
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
     'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1', 'severe_carryover_lag1', 'heat_dry_stress'
+    'heat_dry_stress'
 ]
 
 before_drop = len(df_fe)
@@ -390,8 +388,7 @@ TRIAL_CONFIGS = [
         'dense_units': 96,
         'lr': 6e-4,
         'patience': 14,
-    },
-]
+    }]
 
 def compute_focal_alpha(y_labels, n_classes, mode='inverse_train_seq', manual_alpha=None):
     if mode == 'none':
@@ -520,8 +517,7 @@ for i, cfg in enumerate(TRIAL_CONFIGS, start=1):
         MacroF1Callback(X_val_seq, y_val_enc),
         EarlyStopping(monitor='val_macro_f1', mode='max', patience=cfg['patience'], restore_best_weights=True, verbose=1),
         ModelCheckpoint(trial_ckpt, monitor='val_macro_f1', mode='max', save_best_only=True, verbose=0),
-        ReduceLROnPlateau(monitor='val_macro_f1', mode='max', factor=0.5, patience=max(4, cfg['patience'] // 3), min_lr=1e-6, verbose=1),
-    ]
+        ReduceLROnPlateau(monitor='val_macro_f1', mode='max', factor=0.5, patience=max(4, cfg['patience'] // 3), min_lr=1e-6, verbose=1)]
 
     fit_kwargs = {}
     if cfg['use_class_weight']:
@@ -612,7 +608,10 @@ y_pred = np.argmax(y_pred_prob * class_multipliers, axis=1)
 
 present_classes = sorted(set(y_test) | set(y_pred))
 target_names = [label_map[i] for i in present_classes]
+present_classes_raw = sorted(set(y_test) | set(y_pred_raw))
+target_names_raw = [label_map[i] for i in present_classes_raw]
 
+report_raw = classification_report(y_test, y_pred_raw, labels=present_classes_raw, target_names=target_names_raw, digits=4, zero_division=0)
 report = classification_report(y_test, y_pred, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 accuracy = accuracy_score(y_test, y_pred)
 macro_f1 = f1_score(y_test, y_pred, average='macro', zero_division=0)
@@ -659,6 +658,7 @@ plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/confusion_matrix.png', dpi=140)
 plt.show()
 
+per_class_f1_raw = f1_score(y_test, y_pred_raw, labels=list(range(num_classes)), average=None, zero_division=0)
 per_class_f1 = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
 fig, ax = plt.subplots(figsize=(10, 5))
 bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1)
@@ -710,9 +710,14 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     for row in sorted(trial_results, key=lambda x: x['val_macro_f1'], reverse=True):
         f.write(f'  {row["name"]}: {row["val_macro_f1"]:.4f} (balancer={row["balancer"]})\n')
     f.write('\n')
-    f.write('Per-class F1:\n')
+    f.write('Per-class F1 (raw):\n')
+    for i in range(num_classes):
+        f.write(f'  {label_map[i]}: {per_class_f1_raw[i]:.4f}\n')
+    f.write('\nPer-class F1:\n')
     for i in range(num_classes):
         f.write(f'  {label_map[i]}: {per_class_f1[i]:.4f}\n')
+    f.write('\nClassification Report (raw):\n')
+    f.write(report_raw)
     f.write('\nClassification Report:\n')
     f.write(report)
 

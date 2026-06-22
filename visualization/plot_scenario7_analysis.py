@@ -34,11 +34,9 @@ N_CLASSES = 6
 
 SUMMARY_CANDIDATES = {
     'kansas': [
-        os.path.join('kansas', 'output_weekly_kansas_scenario7', 'results_summary.txt'),
-    ],
+        os.path.join('kansas', 'output_weekly_kansas_scenario7', 'results_summary.txt')],
     'nebraska': [
-        os.path.join('nebraska', 'output_weekly_nebraska_scenario7', 'results_summary.txt'),
-    ],
+        os.path.join('nebraska', 'output_weekly_nebraska_scenario7', 'results_summary.txt')],
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -221,7 +219,6 @@ def plot_perclass_f1_comparison(kansas_data, nebraska_data):
     plt.close()
     print(f"[1/3] Tersimpan: {out}")
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # PLOT 2 & 3 — Pergeseran Distribusi Prediksi vs Aktual Skenario 7
 # ─────────────────────────────────────────────────────────────────────────────
@@ -322,7 +319,6 @@ def plot_distribution_shift(region_name, actual_counts, predicted_counts, total,
     plt.close()
     print(f"[{2 if 'kansas' in output_filename else 3}/3] Tersimpan: {out}")
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
@@ -366,7 +362,6 @@ def main():
     )
 
     print("\nSelesai! Semua file berhasil disimpan di folder visualization/.")
-
 
 if __name__ == '__main__':
     main()

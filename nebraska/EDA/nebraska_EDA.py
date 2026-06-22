@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display
 
-
 def decumulate_drought(row):
     pmf_d4 = row['D4']
     pmf_d3 = max(0.0, row['D3'] - row['D4'])
@@ -15,7 +14,6 @@ def decumulate_drought(row):
     pmf_d0 = max(0.0, row['D0'] - row['D1'])
     pmf_none = max(0.0, row['None'])
     return pd.Series([pmf_none, pmf_d0, pmf_d1, pmf_d2, pmf_d3, pmf_d4])
-
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Run Nebraska EDA and save visualization outputs.')
@@ -32,7 +30,6 @@ def build_parser():
         help='Directory to save EDA figures (defaults to nebraska/EDA).',
     )
     return parser
-
 
 def main(data_path=None, output_dir=None):
     sns.set_theme(style='whitegrid', context='talk')
@@ -55,8 +52,7 @@ def main(data_path=None, output_dir=None):
         candidate_paths = [
             project_root / 'Integrated_weekly_NEB_20counties.csv',
             base_dir.parent / 'Integrated_weekly_NEB_20counties.csv',
-            base_dir / 'Integrated_weekly_NEB_20counties.csv',
-        ]
+            base_dir / 'Integrated_weekly_NEB_20counties.csv']
         data_path = next((p for p in candidate_paths if p.exists()), candidate_paths[0])
     output_dir = Path(output_dir) if output_dir is not None else base_dir
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -177,7 +173,6 @@ def main(data_path=None, output_dir=None):
 
     print(f'Saved EDA figure to: {eda_fig_path}')
     print(f'Saved weekly share figure to: {weekly_fig_path}')
-
 
 if __name__ == '__main__':
     args = build_parser().parse_args()

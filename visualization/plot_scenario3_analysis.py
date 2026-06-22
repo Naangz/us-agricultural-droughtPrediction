@@ -104,8 +104,7 @@ def engineer_features(df):
         df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
     # 5. Hand-engineered Carryovers & Stress Indicators
-    df_fe['drought_carryover_lag1'] = df_fe['D0_lag1'] + df_fe['D1_lag1'] + 0.5 * df_fe['D2_lag1']
-    df_fe['severe_carryover_lag1'] = df_fe['D3_lag1'] + df_fe['D4_lag1']
+
     df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
     
     return df_fe
@@ -336,8 +335,8 @@ def main():
     if HAS_ML_LIBRARIES:
         try:
             # Kansas config
-            ks_features = ['D3_lag1', 'D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'severe_carryover_lag1', 
-                           'D2_lag2', 'PREC_lag1', 'drought_carryover_lag1', 'PREC_roll12_mean']
+            ks_features = ['D3_lag1', 'D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 
+                           'D2_lag2', 'PREC_lag1', 'PREC_roll12_mean']
             ks_multipliers = np.array([1.0220733880996704, 1.4260830879211426, 1.4041149616241455, 
                                        0.8815466165542603, 1.1811882257461548, 1.1346834897994995])
             ks_data_path = "Integrated_weekly_KAN_20counties.csv"
@@ -350,9 +349,7 @@ def main():
             
         try:
             # Nebraska config
-            ne_features = ['D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'D3_lag1', 'D1_lag2', 'None_lag2', 
-                           'drought_carryover_lag1', 'week_sin', 'PREC_lag2', 'PREC_roll4_std', 
-                           'severe_carryover_lag1', 'RH2M_lag8', 'PREC_roll4_mean', 'D4_lag1']
+            ne_features = ['D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'D3_lag1', 'D1_lag2', 'None_lag2', 'week_sin', 'PREC_lag2', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll4_mean', 'D4_lag1']
             ne_multipliers = np.array([1.4989957809448242, 1.2145313024520874, 1.2288269996643066, 
                                        1.1994571685791016, 0.6609528660774231, 0.7688682675361633])
             ne_data_path = "Integrated_weekly_NEB_20counties.csv"

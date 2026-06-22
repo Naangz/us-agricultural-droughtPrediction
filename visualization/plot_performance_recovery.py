@@ -112,7 +112,7 @@ def main():
             'color': '#0288D1', # Deep Sky Blue
             'marker': 'o',
             'jump_text': 'Kansas jump: +36.38% F1\n(0.4376 \u2192 0.8014)',
-            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag1\n- severe_carryover_lag1\n- week_sin, PREC_lag8'
+            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag1\n- week_sin, PREC_lag8'
         },
         {
             'name': 'Nebraska',
@@ -121,7 +121,7 @@ def main():
             'color': '#F57C00', # Vibrant Orange
             'marker': 's', # Square marker
             'jump_text': 'Nebraska jump: +25.75% F1\n(0.4942 \u2192 0.7517)',
-            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag2\n- severe_carryover_lag1\n- D0_lag2, PREC_lag4'
+            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag2\n- D0_lag2, PREC_lag4'
         }
     ]
     

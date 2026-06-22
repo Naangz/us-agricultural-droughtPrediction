@@ -117,8 +117,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['drought_carryover_lag1'] = df_fe['D0_lag1'] + df_fe['D1_lag1'] + 0.5 * df_fe['D2_lag1']
-df_fe['severe_carryover_lag1'] = df_fe['D3_lag1'] + df_fe['D4_lag1']
 df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
@@ -131,7 +129,7 @@ feature_cols = [
     'week_sin', 'week_cos',
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
     'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1', 'severe_carryover_lag1', 'heat_dry_stress'
+    'heat_dry_stress'
 ]
 
 before_drop = len(df_fe)
@@ -275,8 +273,7 @@ TRIAL_CONFIGS = [
         'dense_units': 96,
         'lr': 6e-4,
         'patience': 14,
-    },
-]
+    }]
 
 def compute_focal_alpha(y_labels, n_classes, mode='inverse_train_seq', manual_alpha=None):
     if mode == 'none':
@@ -405,8 +402,7 @@ for i, cfg in enumerate(TRIAL_CONFIGS, start=1):
         MacroF1Callback(X_val_seq, y_val_enc),
         EarlyStopping(monitor='val_macro_f1', mode='max', patience=cfg['patience'], restore_best_weights=True, verbose=1),
         ModelCheckpoint(trial_ckpt, monitor='val_macro_f1', mode='max', save_best_only=True, verbose=0),
-        ReduceLROnPlateau(monitor='val_macro_f1', mode='max', factor=0.5, patience=max(4, cfg['patience'] // 3), min_lr=1e-6, verbose=1),
-    ]
+        ReduceLROnPlateau(monitor='val_macro_f1', mode='max', factor=0.5, patience=max(4, cfg['patience'] // 3), min_lr=1e-6, verbose=1)]
 
     fit_kwargs = {}
     if cfg['use_class_weight']:

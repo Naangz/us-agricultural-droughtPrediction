@@ -20,7 +20,6 @@ from pathlib import Path
 
 import pandas as pd
 
-
 TARGET_COUNTIES_PER_STATE = 20
 
 NASA_FEATURES = [
@@ -29,8 +28,7 @@ NASA_FEATURES = [
     "ps",
     "rh2m",
     "t2m",
-    "ws2m",
-]
+    "ws2m"]
 
 NASA_RENAME = {
     "allsky_sfc_sw_dwn": "ALLSKY_SFC_SW_DWN",
@@ -52,9 +50,7 @@ USDM_COLS = [
     "D3",
     "D4",
     "ValidStart",
-    "ValidEnd",
-]
-
+    "ValidEnd"]
 
 @dataclass(frozen=True)
 class StateConfig:
@@ -63,7 +59,6 @@ class StateConfig:
     usdm_path: str
     output_path: str
     county_selection_path: str
-
 
 STATE_CONFIGS = [
     StateConfig(
@@ -79,14 +74,11 @@ STATE_CONFIGS = [
         usdm_path="NEB_dm_export_20100101_20251231.csv",
         output_path="Integrated_weekly_NEB_20counties.csv",
         county_selection_path="County_selection_NE_20.csv",
-    ),
-]
-
+    )]
 
 def to_usdm_week_start(date_series: pd.Series) -> pd.Series:
     """Map dates to Tuesday week-start, consistent with USDM ValidStart cadence."""
     return date_series.dt.to_period("W-MON").dt.start_time
-
 
 def prepare_nasa_weekly(nasa_csv: Path) -> pd.DataFrame:
     nasa = pd.read_csv(nasa_csv)
@@ -100,7 +92,6 @@ def prepare_nasa_weekly(nasa_csv: Path) -> pd.DataFrame:
     )
     return weekly
 
-
 def prepare_usdm_weekly(usdm_csv: Path, state_code: str) -> pd.DataFrame:
     usdm = pd.read_csv(usdm_csv, usecols=USDM_COLS)
     usdm["ValidStart"] = pd.to_datetime(usdm["ValidStart"])
@@ -108,7 +99,6 @@ def prepare_usdm_weekly(usdm_csv: Path, state_code: str) -> pd.DataFrame:
     usdm["week_start"] = usdm["ValidStart"]
     usdm = usdm[usdm["State"] == state_code].copy()
     return usdm
-
 
 def select_counties(usdm_weekly: pd.DataFrame, target_count: int) -> pd.DataFrame:
     """Select counties deterministically by ascending FIPS to keep runs reproducible."""
@@ -120,7 +110,6 @@ def select_counties(usdm_weekly: pd.DataFrame, target_count: int) -> pd.DataFram
         .reset_index(drop=True)
     )
     return county_master
-
 
 def integrate_state(base_dir: Path, cfg: StateConfig, selected_fips: set[int]) -> pd.DataFrame:
     nasa_weekly = prepare_nasa_weekly(base_dir / cfg.nasa_path)
@@ -154,11 +143,9 @@ def integrate_state(base_dir: Path, cfg: StateConfig, selected_fips: set[int]) -
         "D1",
         "D2",
         "D3",
-        "D4",
-    ]
+        "D4"]
 
     return merged[output_cols]
-
 
 def main() -> None:
     base_dir = Path(__file__).resolve().parent
@@ -197,8 +184,7 @@ def main() -> None:
                 "PS",
                 "RH2M",
                 "T2M",
-                "WS2M",
-            ]].isna().any(axis=1)
+                "WS2M"]].isna().any(axis=1)
         ].shape[0]
 
         print(f"[{cfg.code}] rows: {len(integrated):,}")
@@ -206,7 +192,6 @@ def main() -> None:
         print(f"[{cfg.code}] unique counties: {integrated['FIPS'].nunique():,}")
         print(f"[{cfg.code}] rows with missing NASA features: {missing_nasa_rows:,}")
         print(f"[{cfg.code}] output: {cfg.output_path}")
-
 
 if __name__ == "__main__":
     main()

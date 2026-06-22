@@ -5,53 +5,118 @@ Seq Length: 52
 
 --- FEATURE SELECTION ---
 Baseline feature count: 41
-Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.7401
+Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.7979
 Feature ranking method: Permutation Importance (macro F1 on validation)
+Permutation importance CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario3/permutation_importance.csv
 Subset sizes evaluated: [30, 25, 20, 15, 10]
 
-Subset evaluation results:
-  Top-15: Validation Macro F1 = 0.6685
-  Top-10: Validation Macro F1 = 0.5363
-  Top-25: Validation Macro F1 = 0.4813
-  Top-20: Validation Macro F1 = 0.4774
-  Top-30: Validation Macro F1 = 0.3665
+Permutation importance ranking:
+  rank | feature | importance
+   1 | D3_lag1 | 0.156336
+   2 | D1_lag1 | 0.115959
+   3 | D2_lag1 | 0.088624
+   4 | None_lag1 | 0.086043
+   5 | D1_lag2 | 0.027057
+   6 | D0_lag1 | 0.017599
+   7 | D0_lag2 | 0.007134
+   8 | D2_lag2 | 0.007009
+   9 | D3_lag2 | 0.004424
+  10 | PREC_roll4_mean | 0.002039
+  11 | None_lag2 | 0.001666
+  12 | PREC_roll12_mean | 0.000684
+  13 | PREC_roll12_std | 0.000578
+  14 | PREC_lag2 | 0.000477
+  15 | PREC_lag8 | 0.000250
+  16 | D4_lag1 | 0.000000
+  17 | D4_lag2 | 0.000000
+  18 | RH2M_lag2 | -0.000120
+  19 | week_sin | -0.000682
+  20 | PRECTOTCORR | -0.000833
+  21 | T2M_lag2 | -0.001359
+  22 | RH2M | -0.001522
+  23 | PS | -0.001604
+  24 | ALLSKY_SFC_SW_DWN | -0.002964
+  25 | T2M_lag4 | -0.003009
+  26 | T2M_roll4_mean | -0.003148
+  27 | RH2M_lag4 | -0.003411
+  28 | WS2M | -0.003596
+  29 | PREC_lag1 | -0.003620
+  30 | RH2M_lag8 | -0.003644
+  31 | PREC_roll4_std | -0.003978
+  32 | PREC_lag4 | -0.004516
+  33 | T2M_lag1 | -0.005302
+  34 | T2M | -0.005349
+  35 | T2M_roll12_mean | -0.007593
+  36 | week_cos | -0.007830
+  37 | heat_dry_stress | -0.008123
+  38 | T2M_lag8 | -0.008592
+  39 | RH2M_lag1 | -0.010555
 
-Best subset selected: Top-15 (15 features) with val macro-F1 = 0.6685
-Selected features: ['D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'D3_lag1', 'D1_lag2', 'None_lag2', 'drought_carryover_lag1', 'week_sin', 'PREC_lag2', 'PREC_roll4_std', 'severe_carryover_lag1', 'RH2M_lag8', 'PREC_roll4_mean', 'D4_lag1']
+Subset evaluation results:
+  Top-10: Validation Macro F1 = 0.6208
+  Top-20: Validation Macro F1 = 0.5995
+  Top-30: Validation Macro F1 = 0.5199
+  Top-15: Validation Macro F1 = 0.5147
+  Top-25: Validation Macro F1 = 0.4807
+
+Best subset selected: Top-10 (10 features) with val macro-F1 = 0.6208
+Selected features: ['D3_lag1', 'D1_lag1', 'D2_lag1', 'None_lag1', 'D1_lag2', 'D0_lag1', 'D0_lag2', 'D2_lag2', 'D3_lag2', 'PREC_roll4_mean']
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.7835
-Val Macro F1 (raw/tuned): 0.7835 / 0.7980
-Class multipliers: [1.4989957809448242, 1.2145313024520874, 1.2288269996643066, 1.1994571685791016, 0.6609528660774231, 0.7688682675361633]
-Accuracy (raw): 0.7416
-Macro F1 (raw): 0.7271
-Accuracy: 0.7627
-Macro F1: 0.7476
-Weighted F1: 0.7636
+Val Macro F1 (best trial): 0.6064
+Val Macro F1 (raw/tuned): 0.6064 / 0.7612
+Class multipliers: [1.7606219053268433, 1.3515679836273193, 0.9042826890945435, 0.9152771234512329, 1.113876461982727, 0.7125633955001831]
+Accuracy (raw): 0.6433
+Macro F1 (raw): 0.5875
+Accuracy: 0.6567
+Macro F1: 0.5973
+Weighted F1: 0.6662
 
 Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.7835 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.7224 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.4954 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.6064 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.6034 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.4688 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.9153
+  D0: 0.6391
+  D1: 0.7099
+  D2: 0.5534
+  D3: 0.4269
+  D4: 0.2802
 
 Per-class F1:
-  None: 0.9167
-  D0: 0.6287
-  D1: 0.7254
-  D2: 0.7455
-  D3: 0.7316
-  D4: 0.7375
+  None: 0.9245
+  D0: 0.6849
+  D1: 0.7069
+  D2: 0.5304
+  D3: 0.4729
+  D4: 0.2642
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.9443    0.8880    0.9153       973
+          D0     0.6294    0.6490    0.6391       547
+          D1     0.7506    0.6733    0.7099       952
+          D2     0.7500    0.4385    0.5534      1081
+          D3     0.3325    0.5962    0.4269       473
+          D4     0.1989    0.4740    0.2802       154
+
+    accuracy                         0.6433      4180
+   macro avg     0.6010    0.6198    0.5875      4180
+weighted avg     0.7120    0.6433    0.6601      4180
 
 Classification Report:
               precision    recall  f1-score   support
 
-        None     0.9415    0.8931    0.9167       973
-          D0     0.6542    0.6051    0.6287       547
-          D1     0.6857    0.7700    0.7254       952
-          D2     0.8056    0.6938    0.7455      1081
-          D3     0.6615    0.8182    0.7316       473
-          D4     0.7108    0.7662    0.7375       154
+        None     0.9303    0.9188    0.9245       973
+          D0     0.6426    0.7331    0.6849       547
+          D1     0.8081    0.6282    0.7069       952
+          D2     0.7454    0.4117    0.5304      1081
+          D3     0.3439    0.7569    0.4729       473
+          D4     0.2258    0.3182    0.2642       154
 
-    accuracy                         0.7627      4180
-   macro avg     0.7432    0.7577    0.7476      4180
-weighted avg     0.7703    0.7627    0.7636      4180
+    accuracy                         0.6567      4180
+   macro avg     0.6160    0.6278    0.5973      4180
+weighted avg     0.7247    0.6567    0.6662      4180

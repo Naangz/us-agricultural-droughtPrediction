@@ -6,42 +6,97 @@ Seq Length: 52
 --- FEATURE SELECTION ---
 Baseline feature count: 41
 Correlation threshold: 0.9
+Feature-model CSV (mutual information): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/feature_model_mutual_information.csv
+Feature-feature CSV (all abs correlations): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/feature_feature_abs_correlation_all.csv
+Feature-feature CSV (selected abs correlations): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/feature_feature_abs_correlation_selected.csv
+Selected ranking CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/selected_feature_ranking.csv
+Pruned pairs CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/pruned_feature_pairs.csv
 Final selected feature count: 26
-Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M', 'heat_dry_stress', 'PREC_lag2', 'PREC_lag1', 'PREC_lag8', 'PRECTOTCORR', 'PREC_lag4', 'D0_lag2', 'D2_lag1', 'severe_carryover_lag1', 'D4_lag2', 'week_sin']
+Selected features: ['None_lag1', 'RH2M_lag8', 'T2M_lag8', 'ALLSKY_SFC_SW_DWN', 'PREC_roll12_std', 'T2M_lag1', 'RH2M_lag4', 'T2M_lag4', 'PS', 'PREC_roll4_mean', 'heat_dry_stress', 'RH2M_lag1', 'RH2M_lag2', 'PREC_roll12_mean', 'PREC_lag2', 'PREC_roll4_std', 'RH2M', 'PREC_lag8', 'WS2M', 'PRECTOTCORR', 'PREC_lag1', 'PREC_lag4', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1']
+Selected feature ranking (correlation-aware):
+  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to
+   1 | None_lag1 | 0.585075 | 0.0000 | -
+   2 | RH2M_lag8 | 0.553511 | 0.3196 | None_lag1
+   3 | T2M_lag8 | 0.553386 | 0.4823 | RH2M_lag8
+   4 | ALLSKY_SFC_SW_DWN | 0.552610 | 0.1600 | T2M_lag8
+   5 | PREC_roll12_std | 0.552602 | 0.5118 | ALLSKY_SFC_SW_DWN
+   6 | T2M_lag1 | 0.552531 | 0.7743 | ALLSKY_SFC_SW_DWN
+   7 | RH2M_lag4 | 0.549788 | 0.4677 | RH2M_lag8
+   8 | T2M_lag4 | 0.548205 | 0.8615 | T2M_lag1
+   9 | PS | 0.547336 | 0.2480 | ALLSKY_SFC_SW_DWN
+  10 | PREC_roll4_mean | 0.545728 | 0.7341 | PREC_roll12_std
+  11 | heat_dry_stress | 0.545130 | 0.8840 | T2M_lag1
+  12 | RH2M_lag1 | 0.544474 | 0.5189 | heat_dry_stress
+  13 | RH2M_lag2 | 0.544159 | 0.6671 | RH2M_lag1
+  14 | PREC_roll12_mean | 0.543106 | 0.8623 | PREC_roll12_std
+  15 | PREC_lag2 | 0.542235 | 0.7067 | PREC_roll4_mean
+  16 | PREC_roll4_std | 0.542067 | 0.8256 | PREC_roll4_mean
+  17 | RH2M | 0.541488 | 0.6673 | RH2M_lag1
+  18 | PREC_lag8 | 0.538501 | 0.6103 | PREC_roll12_mean
+  19 | WS2M | 0.534038 | 0.5605 | PREC_roll12_mean
+  20 | PRECTOTCORR | 0.533277 | 0.4430 | T2M_lag1
+  21 | PREC_lag1 | 0.532891 | 0.6874 | PREC_roll4_mean
+  22 | PREC_lag4 | 0.532419 | 0.6887 | PREC_roll4_mean
+  23 | D1_lag1 | 0.519110 | 0.7091 | None_lag1
+  24 | D2_lag1 | 0.400711 | 0.8022 | D1_lag1
+  25 | D3_lag1 | 0.328106 | 0.8774 | D2_lag1
+  26 | D4_lag1 | 0.208348 | 0.7310 | D3_lag1
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.8558
-Val Macro F1 (raw/tuned): 0.8558 / 0.8658
-Class multipliers: [0.958981990814209, 1.1056389808654785, 1.2249103784561157, 0.9423204064369202, 0.550000011920929, 0.6297084093093872]
-Accuracy (raw): 0.7744
-Macro F1 (raw): 0.7527
-Accuracy: 0.7782
-Macro F1: 0.7603
-Weighted F1: 0.7825
+Val Macro F1 (best trial): 0.8598
+Val Macro F1 (raw/tuned): 0.8598 / 0.8653
+Class multipliers: [1.0397485494613647, 0.9792780876159668, 0.6702917218208313, 0.6430429816246033, 1.1847668886184692, 0.550000011920929]
+Accuracy (raw): 0.8086
+Macro F1 (raw): 0.8010
+Accuracy: 0.8029
+Macro F1: 0.7867
+Weighted F1: 0.8058
 
 Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.8558 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.8412 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.6904 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.8598 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8416 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.7989 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.9093
+  D0: 0.7183
+  D1: 0.8103
+  D2: 0.7937
+  D3: 0.7522
+  D4: 0.8224
 
 Per-class F1:
-  None: 0.8826
-  D0: 0.6926
-  D1: 0.7968
-  D2: 0.7739
-  D3: 0.6891
-  D4: 0.7267
+  None: 0.9132
+  D0: 0.7343
+  D1: 0.8103
+  D2: 0.7809
+  D3: 0.7348
+  D4: 0.7464
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.9456    0.8756    0.9093       973
+          D0     0.6927    0.7459    0.7183       547
+          D1     0.8248    0.7962    0.8103       952
+          D2     0.8461    0.7475    0.7937      1081
+          D3     0.6502    0.8922    0.7522       473
+          D4     0.7904    0.8571    0.8224       154
+
+    accuracy                         0.8086      4180
+   macro avg     0.7916    0.8191    0.8010      4180
+weighted avg     0.8201    0.8086    0.8109      4180
 
 Classification Report:
               precision    recall  f1-score   support
 
-        None     0.9513    0.8232    0.8826       973
-          D0     0.6224    0.7806    0.6926       547
-          D1     0.8028    0.7910    0.7968       952
-          D2     0.8236    0.7299    0.7739      1081
-          D3     0.6325    0.7569    0.6891       473
-          D4     0.6579    0.8117    0.7267       154
+        None     0.9411    0.8869    0.9132       973
+          D0     0.6835    0.7934    0.7343       547
+          D1     0.8501    0.7742    0.8103       952
+          D2     0.8548    0.7188    0.7809      1081
+          D3     0.6055    0.9345    0.7348       473
+          D4     0.8443    0.6688    0.7464       154
 
-    accuracy                         0.7782      4180
-   macro avg     0.7484    0.7822    0.7603      4180
-weighted avg     0.7945    0.7782    0.7825      4180
+    accuracy                         0.8029      4180
+   macro avg     0.7965    0.7961    0.7867      4180
+weighted avg     0.8228    0.8029    0.8058      4180

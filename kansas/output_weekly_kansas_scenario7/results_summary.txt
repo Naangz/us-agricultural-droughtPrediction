@@ -29,6 +29,14 @@ Trial leaderboard:
   ros_focal_no_cw_96x48: 0.8382 (balancer=ROS)
   none_focal_inv_cw_64x32: 0.8295 (balancer=NONE)
 
+Per-class F1 (raw):
+  None: 0.9043
+  D0: 0.7743
+  D1: 0.7767
+  D2: 0.7549
+  D3: 0.7695
+  D4: 0.9416
+
 Per-class F1:
   None: 0.9045
   D0: 0.7661
@@ -36,7 +44,6 @@ Per-class F1:
   D2: 0.8062
   D3: 0.7891
   D4: 0.9294
-
 
 Per-class Accuracy:
   None: 0.9096
@@ -53,6 +60,20 @@ Per-class Accuracy (raw):
   D2: 0.7232
   D3: 0.8750
   D4: 0.9653
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.9215    0.8878    0.9043      1150
+          D0     0.7364    0.8164    0.7743       975
+          D1     0.8272    0.7321    0.7767       948
+          D2     0.7895    0.7232    0.7549       560
+          D3     0.6866    0.8750    0.7695       288
+          D4     0.9191    0.9653    0.9416       259
+
+    accuracy                         0.8177      4180
+   macro avg     0.8134    0.8333    0.8202      4180
+weighted avg     0.8229    0.8177    0.8181      4180
 
 Classification Report:
               precision    recall  f1-score   support

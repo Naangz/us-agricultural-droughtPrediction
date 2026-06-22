@@ -1,47 +1,96 @@
 BiLSTM Weekly Nebraska - Scenario 2A: Correlation-aware Feature Selection (Top-20)
-Best trial: none_focal_inv_cw_64x32
-Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52
 
 --- FEATURE SELECTION ---
 Baseline feature count: 41
 Correlation threshold: 0.9
+Feature-model CSV (mutual information): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/feature_model_mutual_information.csv
+Feature-feature CSV (all abs correlations): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/feature_feature_abs_correlation_all.csv
+Feature-feature CSV (selected abs correlations): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/feature_feature_abs_correlation_selected.csv
+Selected ranking CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/selected_feature_ranking.csv
+Pruned pairs CSV: /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2A/pruned_feature_pairs.csv
 Final selected feature count: 20
-Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M', 'heat_dry_stress', 'PREC_lag2', 'PREC_lag1', 'PREC_lag8', 'PRECTOTCORR']
+Selected features: ['None_lag1', 'RH2M_lag8', 'T2M_lag8', 'ALLSKY_SFC_SW_DWN', 'PREC_roll12_std', 'T2M_lag1', 'RH2M_lag4', 'T2M_lag4', 'PS', 'PREC_roll4_mean', 'heat_dry_stress', 'RH2M_lag1', 'RH2M_lag2', 'PREC_roll12_mean', 'PREC_lag2', 'PREC_roll4_std', 'RH2M', 'PREC_lag8', 'WS2M', 'PRECTOTCORR']
+Selected feature ranking (correlation-aware):
+  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to
+   1 | None_lag1 | 0.585075 | 0.0000 | -
+   2 | RH2M_lag8 | 0.553511 | 0.3196 | None_lag1
+   3 | T2M_lag8 | 0.553386 | 0.4823 | RH2M_lag8
+   4 | ALLSKY_SFC_SW_DWN | 0.552610 | 0.1600 | T2M_lag8
+   5 | PREC_roll12_std | 0.552602 | 0.5118 | ALLSKY_SFC_SW_DWN
+   6 | T2M_lag1 | 0.552531 | 0.7743 | ALLSKY_SFC_SW_DWN
+   7 | RH2M_lag4 | 0.549788 | 0.4677 | RH2M_lag8
+   8 | T2M_lag4 | 0.548205 | 0.8615 | T2M_lag1
+   9 | PS | 0.547336 | 0.2480 | ALLSKY_SFC_SW_DWN
+  10 | PREC_roll4_mean | 0.545728 | 0.7341 | PREC_roll12_std
+  11 | heat_dry_stress | 0.545130 | 0.8840 | T2M_lag1
+  12 | RH2M_lag1 | 0.544474 | 0.5189 | heat_dry_stress
+  13 | RH2M_lag2 | 0.544159 | 0.6671 | RH2M_lag1
+  14 | PREC_roll12_mean | 0.543106 | 0.8623 | PREC_roll12_std
+  15 | PREC_lag2 | 0.542235 | 0.7067 | PREC_roll4_mean
+  16 | PREC_roll4_std | 0.542067 | 0.8256 | PREC_roll4_mean
+  17 | RH2M | 0.541488 | 0.6673 | RH2M_lag1
+  18 | PREC_lag8 | 0.538501 | 0.6103 | PREC_roll12_mean
+  19 | WS2M | 0.534038 | 0.5605 | PREC_roll12_mean
+  20 | PRECTOTCORR | 0.533277 | 0.4430 | T2M_lag1
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.6040
-Val Macro F1 (raw/tuned): 0.6040 / 0.6424
-Class multipliers: [1.6242762804031372, 1.0400909185409546, 0.7402974367141724, 0.9676176905632019, 0.9893736243247986, 0.6640336513519287]
-Accuracy (raw): 0.5218
-Macro F1 (raw): 0.4495
-Accuracy: 0.5878
-Macro F1: 0.4942
-Weighted F1: 0.5830
+Val Macro F1 (best trial): 0.4832
+Val Macro F1 (raw/tuned): 0.4832 / 0.5086
+Class multipliers: [1.090155839920044, 0.7491489052772522, 0.6521157622337341, 0.6612790822982788, 1.4907511472702026, 0.7446761727333069]
+Accuracy (raw): 0.4529
+Macro F1 (raw): 0.3962
+Accuracy: 0.4438
+Macro F1: 0.3802
+Weighted F1: 0.4164
 
 Trial leaderboard:
-  none_focal_inv_cw_64x32: 0.6040 (balancer=NONE)
-  ros_focal_no_cw_96x48: 0.5785 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.5094 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.4832 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.4351 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.4002 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.9100
+  D0: 0.3559
+  D1: 0.4573
+  D2: 0.2238
+  D3: 0.2190
+  D4: 0.2111
 
 Per-class F1:
-  None: 0.8872
-  D0: 0.5995
-  D1: 0.5748
-  D2: 0.4458
-  D3: 0.4578
-  D4: 0.0000
+  None: 0.9337
+  D0: 0.3395
+  D1: 0.3598
+  D2: 0.0982
+  D3: 0.3545
+  D4: 0.1957
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.9388    0.8828    0.9100       973
+          D0     0.3126    0.4132    0.3559       547
+          D1     0.4383    0.4779    0.4573       952
+          D2     0.2997    0.1785    0.2238      1081
+          D3     0.2857    0.1776    0.2190       473
+          D4     0.1343    0.4935    0.2111       154
+
+    accuracy                         0.4529      4180
+   macro avg     0.4016    0.4373    0.3962      4180
+weighted avg     0.4740    0.4529    0.4530      4180
 
 Classification Report:
               precision    recall  f1-score   support
 
-        None     0.9291    0.8489    0.8872       973
-          D0     0.5805    0.6197    0.5995       547
-          D1     0.5803    0.5693    0.5748       952
-          D2     0.5071    0.3978    0.4458      1081
-          D3     0.3459    0.6765    0.4578       473
-          D4     0.0000    0.0000    0.0000       154
+        None     0.9193    0.9486    0.9337       973
+          D0     0.2847    0.4205    0.3395       547
+          D1     0.4119    0.3193    0.3598       952
+          D2     0.3119    0.0583    0.0982      1081
+          D3     0.2463    0.6321    0.3545       473
+          D4     0.1682    0.2338    0.1957       154
 
-    accuracy                         0.5878      4180
-   macro avg     0.4905    0.5187    0.4942      4180
-weighted avg     0.5947    0.5878    0.5830      4180
+    accuracy                         0.4438      4180
+   macro avg     0.3904    0.4354    0.3802      4180
+weighted avg     0.4598    0.4438    0.4164      4180

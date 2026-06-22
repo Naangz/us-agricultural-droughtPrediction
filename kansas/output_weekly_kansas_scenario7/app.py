@@ -26,9 +26,7 @@ except Exception as e:
 
 feature_cols = config.get("feature_cols", [
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
-    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1', 'severe_carryover_lag1'
-])
+    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2'])
 label_map = config.get("label_map", {
     "0": "None", "1": "D0", "2": "D1", "3": "D2", "4": "D3", "5": "D4"
 })
@@ -133,12 +131,10 @@ friendly_feature_names = [
     'Kekeringan Parah D2 (2 Minggu Lalu)',
     'Kekeringan Ekstrim D3 (2 Minggu Lalu)',
     'Kekeringan Luar Biasa D4 (2 Minggu Lalu)',
-    'Indeks Akumulasi Kekeringan',
-    'Indeks Akumulasi Kekeringan Parah'
 ]
 
 def predict(mode, newbie_lvl_1, newbie_pct_1, newbie_lvl_2, newbie_pct_2,
-            f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14):
+            f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12):
     if model is None:
         return "<h3>Error: Model tidak termuat.</h3>", None
     if scaler is None:
@@ -175,17 +171,13 @@ def predict(mode, newbie_lvl_1, newbie_pct_1, newbie_lvl_2, newbie_pct_2,
             D2_lag2 = p2 if k2 >= 2 else 0.0
             D3_lag2 = p2 if k2 >= 3 else 0.0
             D4_lag2 = p2 if k2 >= 4 else 0.0
-            
-            drought_carryover_lag1 = D0_lag1 + D1_lag1 + 0.5 * D2_lag1
-            severe_carryover_lag1 = D3_lag1 + D4_lag1
-            
+
             input_features = [
                 None_lag1, D0_lag1, D1_lag1, D2_lag1, D3_lag1, D4_lag1,
-                None_lag2, D0_lag2, D1_lag2, D2_lag2, D3_lag2, D4_lag2,
-                drought_carryover_lag1, severe_carryover_lag1
+                None_lag2, D0_lag2, D1_lag2, D2_lag2, D3_lag2, D4_lag2
             ]
         else:
-            input_features = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14]
+            input_features = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12]
 
         # Convert to pandas DataFrame with column names to prevent scaler warnings
         input_df = pd.DataFrame([input_features], columns=feature_cols)
@@ -282,7 +274,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="Sistem Prediksi Kekeringan Mi
         # 🌾 Sistem Prediksi Kekeringan Mingguan County (Kansas Scenario 7)
         *Mendeteksi dan memproyeksikan tingkat kekeringan daerah untuk 1 minggu ke depan di tingkat county (by state) menggunakan model kecerdasan buatan (BiLSTM).*
         
-        Pilih **Mode Sederhana** untuk memasukkan kondisi kekeringan dengan mudah menggunakan istilah umum, atau **Mode Ahli** untuk memasukkan persentase area USDM dan indeks carryover secara manual.
+        Pilih **Mode Sederhana** untuk memasukkan kondisi kekeringan dengan mudah menggunakan istilah umum, atau **Mode Ahli** untuk memasukkan persentase area USDM secara manual.
         """,
         elem_classes=["title-desc"]
     )
@@ -354,7 +346,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="Sistem Prediksi Kekeringan Mi
             """
             ### ⚙️ Input Mode Ahli (Raw Features)
             **Panduan Pengisian:**
-            Masukkan persentase cakupan area (0-100%) untuk masing-masing tingkat kekeringan kumulatif USDM (U.S. Drought Monitor) serta indeks carryover.
+            Masukkan persentase cakupan area (0-100%) untuk masing-masing tingkat kekeringan kumulatif USDM (U.S. Drought Monitor) 
             *Catatan: Nilai kumulatif harus menurun atau sama seiring meningkatnya tingkat keparahan (misal: None + D0 = 100%, D0 >= D1 >= D2 >= D3 >= D4).*
             """
         )
@@ -380,13 +372,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="Sistem Prediksi Kekeringan Mi
                 f6 = gr.Slider(minimum=0.0, maximum=100.0, step=1.0, value=0.0, 
                                label="D4_lag1", 
                                info="Persentase area berkategori Kekeringan Luar Biasa (D4) minggu lalu")
-                f13 = gr.Number(value=0.0, 
-                                label="drought_carryover_lag1", 
-                                info="Indeks limpahan kekeringan kumulatif minggu lalu (D0_lag1 + D1_lag1 + 0.5 * D2_lag1)")
-                f14 = gr.Number(value=0.0, 
-                                label="severe_carryover_lag1", 
-                                info="Indeks limpahan kekeringan parah minggu lalu (D3_lag1 + D4_lag1)")
-                
+
             with gr.Column():
                 gr.Markdown("#### 📅 Lags 2 (Dua Minggu Lalu)")
                 f7 = gr.Slider(minimum=0.0, maximum=100.0, step=1.0, value=100.0, 
@@ -437,7 +423,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="Sistem Prediksi Kekeringan Mi
         fn=predict,
         inputs=[
             mode_toggle, newbie_lvl_1, newbie_pct_1, newbie_lvl_2, newbie_pct_2,
-            f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14
+            f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12
         ],
         outputs=[output_html, output_plot]
     )

@@ -15,8 +15,7 @@ PARAMETERS = [
     "PS",
     "RH2M",
     "T2M",
-    "WS2M",
-]
+    "WS2M"]
 
 # (latitude, longitude)
 COORDINATES: List[Tuple[float, float]] = [
@@ -39,8 +38,7 @@ COORDINATES: List[Tuple[float, float]] = [
     (38.62, -95.27),
     (37.68, -95.46),
     (37.34, -95.26),
-    (39.85, -95.53),
-]
+    (39.85, -95.53)]
 
 OUTPUT_COLUMNS = [
     "allsky_sfc_sw_dwn",
@@ -53,9 +51,7 @@ OUTPUT_COLUMNS = [
     "longitude",
     "year",
     "month",
-    "date",
-]
-
+    "date"]
 
 def to_float_or_none(value):
     """Convert NASA missing values to None."""
@@ -65,7 +61,6 @@ def to_float_or_none(value):
         return float(value)
     except (TypeError, ValueError):
         return None
-
 
 def fetch_point_data(
     session: requests.Session,
@@ -137,7 +132,6 @@ def fetch_point_data(
         f"Gagal ambil data untuk lat={latitude}, lon={longitude} setelah {retries} percobaan"
     ) from last_error
 
-
 def main():
     parser = argparse.ArgumentParser(
         description="Download NASA POWER daily AG data for predefined coordinates."
@@ -189,7 +183,6 @@ def main():
 
     print(f"Selesai. Total baris: {len(all_rows):,}")
     print(f"File tersimpan: {args.output}")
-
 
 if __name__ == "__main__":
     main()
