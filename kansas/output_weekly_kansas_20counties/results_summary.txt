@@ -2,74 +2,74 @@ BiLSTM Weekly Kansas Tuned (20 counties)
 Best trial: ros_focal_no_cw_96x48
 Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52
-Val Macro F1 (best trial): 0.8480
-Val Macro F1 (raw/tuned): 0.8480 / 0.8536
-Class multipliers: [1.7999999523162842, 1.1255494356155396, 0.8058606386184692, 0.8119803667068481, 0.7536675333976746, 1.3244149684906006]
-Accuracy (raw): 0.8177
-Macro F1 (raw): 0.8166
-Weighted F1 (raw): 0.8186
-Accuracy: 0.8014
-Macro F1: 0.7921
-Weighted F1: 0.7990
+Val Macro F1 (best trial): 0.8529
+Val Macro F1 (raw/tuned): 0.8529 / 0.8553
+Class multipliers: [1.0772420167922974, 1.023779273033142, 0.9521114230155945, 0.9149885773658752, 0.8799594640731812, 1.072059154510498]
+Accuracy (raw): 0.8093
+Macro F1 (raw): 0.8025
+Weighted F1 (raw): 0.8102
+Accuracy: 0.8081
+Macro F1: 0.7970
+Weighted F1: 0.8087
 
 Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.8480 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.8440 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.8358 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.8529 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8447 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.8227 (balancer=NONE)
 
 Per-class F1 (raw):
-  None: 0.9022
-  D0: 0.7773
-  D1: 0.7804
-  D2: 0.7721
-  D3: 0.7653
-  D4: 0.9026
+  None: 0.8999
+  D0: 0.7817
+  D1: 0.7726
+  D2: 0.7480
+  D3: 0.7188
+  D4: 0.8938
 
 Per-class F1:
-  None: 0.8969
-  D0: 0.7468
-  D1: 0.7571
-  D2: 0.7742
-  D3: 0.7054
-  D4: 0.8720
+  None: 0.9002
+  D0: 0.7836
+  D1: 0.7725
+  D2: 0.7520
+  D3: 0.6954
+  D4: 0.8781
 
 ======================================================================
 CLASSIFICATION REPORT (RAW)
 ======================================================================
               precision    recall  f1-score   support
 
-        None     0.9323    0.8739    0.9022      1150
-          D0     0.7495    0.8072    0.7773       975
-          D1     0.7989    0.7627    0.7804       948
-          D2     0.7640    0.7804    0.7721       560
-          D3     0.7500    0.7812    0.7653       288
-          D4     0.8764    0.9305    0.9026       259
+        None     0.9345    0.8678    0.8999      1150
+          D0     0.7431    0.8246    0.7817       975
+          D1     0.8126    0.7363    0.7726       948
+          D2     0.7408    0.7554    0.7480       560
+          D3     0.6901    0.7500    0.7188       288
+          D4     0.8502    0.9421    0.8938       259
 
-    accuracy                         0.8177      4180
-   macro avg     0.8118    0.8226    0.8166      4180
-weighted avg     0.8208    0.8177    0.8186      4180
+    accuracy                         0.8093      4180
+   macro avg     0.7952    0.8127    0.8025      4180
+weighted avg     0.8142    0.8093    0.8102      4180
 
 ======================================================================
 CLASSIFICATION REPORT
 ======================================================================
               precision    recall  f1-score   support
 
-        None     0.8688    0.9270    0.8969      1150
-          D0     0.7390    0.7549    0.7468       975
-          D1     0.8238    0.7004    0.7571       948
-          D2     0.7564    0.7929    0.7742       560
-          D3     0.7673    0.6528    0.7054       288
-          D4     0.7900    0.9730    0.8720       259
+        None     0.9320    0.8704    0.9002      1150
+          D0     0.7391    0.8338    0.7836       975
+          D1     0.8216    0.7289    0.7725       948
+          D2     0.7435    0.7607    0.7520       560
+          D3     0.6894    0.7014    0.6954       288
+          D4     0.8194    0.9459    0.8781       259
 
-    accuracy                         0.8014      4180
-   macro avg     0.7909    0.8001    0.7921      4180
-weighted avg     0.8014    0.8014    0.7990      4180
+    accuracy                         0.8081      4180
+   macro avg     0.7908    0.8069    0.7970      4180
+weighted avg     0.8130    0.8081    0.8087      4180
 
 ======================================================================
-Accuracy (raw):    0.8177
-Macro F1 (raw):    0.8166
-Weighted F1 (raw): 0.8186
-Accuracy:    0.8014
-Macro F1:    0.7921
-Weighted F1: 0.7990
+Accuracy (raw):    0.8093
+Macro F1 (raw):    0.8025
+Weighted F1 (raw): 0.8102
+Accuracy:    0.8081
+Macro F1:    0.7970
+Weighted F1: 0.8087
 ======================================================================

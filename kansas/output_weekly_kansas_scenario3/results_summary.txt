@@ -1,121 +1,121 @@
 BiLSTM Weekly Kansas - Scenario 3: Macro F1-driven Feature Selection
-Best trial: ros_focal_inv_no_cw_128x64
-Best trial config: {'name': 'ros_focal_inv_no_cw_128x64', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (128, 64), 'dropout': 0.28, 'dense_units': 96, 'lr': 0.0006, 'patience': 14}
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52
 
 --- FEATURE SELECTION ---
 Baseline feature count: 41
-Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.8314
+Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.8220
 Feature ranking method: Permutation Importance (macro F1 on validation)
 Permutation importance CSV: /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario3/permutation_importance.csv
 Subset sizes evaluated: [30, 25, 20, 15, 10]
 
 Permutation importance ranking:
   rank | feature | importance
-   1 | D3_lag1 | 0.193193
-   2 | D1_lag1 | 0.145983
-   3 | D2_lag1 | 0.112724
-   4 | None_lag1 | 0.068086
-   5 | D0_lag1 | 0.014692
-   6 | D2_lag2 | 0.012064
-   7 | D3_lag2 | 0.005202
-   8 | PREC_lag2 | 0.001372
-   9 | week_cos | 0.000614
-  10 | None_lag2 | 0.000523
-  11 | T2M_roll4_mean | 0.000501
-  12 | PREC_roll4_mean | 0.000079
-  13 | D4_lag1 | 0.000000
-  14 | D4_lag2 | 0.000000
-  15 | T2M_roll12_mean | -0.000038
-  16 | T2M_lag2 | -0.000213
-  17 | T2M_lag1 | -0.000378
-  18 | PREC_lag8 | -0.000450
-  19 | PRECTOTCORR | -0.000603
-  20 | RH2M_lag1 | -0.000603
-  21 | D0_lag2 | -0.000616
-  22 | RH2M_lag2 | -0.000712
-  23 | T2M_lag4 | -0.000828
-  24 | T2M_lag8 | -0.000982
-  25 | PREC_lag1 | -0.001091
-  26 | PREC_lag4 | -0.001091
-  27 | RH2M_lag4 | -0.001148
-  28 | ALLSKY_SFC_SW_DWN | -0.001208
-  29 | WS2M | -0.001315
-  30 | PREC_roll12_std | -0.001411
-  31 | RH2M_lag8 | -0.001541
-  32 | T2M | -0.001658
-  34 | PREC_roll4_std | -0.001804
-  35 | RH2M | -0.001920
-  36 | PREC_roll12_mean | -0.002138
-  37 | week_sin | -0.002203
-  38 | PS | -0.003658
-  39 | D1_lag2 | -0.006800
+   1 | D3_lag1 | 0.213582
+   2 | D2_lag1 | 0.110888
+   3 | D1_lag1 | 0.103717
+   4 | None_lag1 | 0.073808
+   5 | D3_lag2 | 0.071573
+   6 | PREC_lag1 | 0.012447
+   7 | D0_lag1 | 0.011309
+   8 | None_lag2 | 0.008798
+   9 | WS2M | 0.003826
+  10 | week_cos | 0.002903
+  11 | T2M_lag4 | 0.002753
+  12 | T2M_roll12_mean | 0.001216
+  13 | T2M_lag1 | 0.001122
+  14 | week_sin | 0.000845
+  15 | T2M_roll4_mean | 0.000632
+  16 | PREC_lag4 | 0.000574
+  17 | PREC_lag8 | 0.000556
+  18 | D4_lag1 | 0.000000
+  19 | D4_lag2 | 0.000000
+  20 | T2M_lag2 | -0.001350
+  21 | RH2M_lag8 | -0.002273
+  22 | D2_lag2 | -0.002303
+  23 | ALLSKY_SFC_SW_DWN | -0.002346
+  24 | D0_lag2 | -0.002368
+  25 | PS | -0.002511
+  26 | RH2M_lag1 | -0.002566
+  27 | T2M_lag8 | -0.002749
+  28 | RH2M_lag4 | -0.002838
+  29 | D1_lag2 | -0.003000
+  30 | RH2M_lag2 | -0.003206
+  31 | PREC_roll4_std | -0.003206
+  32 | PREC_roll4_mean | -0.004273
+  33 | PREC_roll12_mean | -0.004368
+  34 | PREC_roll12_std | -0.004616
+  35 | PRECTOTCORR | -0.004882
+  36 | T2M | -0.005443
+  37 | RH2M | -0.005822
+  38 | PREC_lag2 | -0.008168
 
 Subset evaluation results:
-  Top-25: Validation Macro F1 = 0.8240
-  Top-15: Validation Macro F1 = 0.8239
-  Top-20: Validation Macro F1 = 0.8060
-  Top-10: Validation Macro F1 = 0.7905
-  Top-30: Validation Macro F1 = 0.7419
+  Top-20: Validation Macro F1 = 0.8106
+  Top-15: Validation Macro F1 = 0.8062
+  Top-25: Validation Macro F1 = 0.7607
+  Top-10: Validation Macro F1 = 0.7388
+  Top-30: Validation Macro F1 = 0.6328
 
-Best subset selected: Top-25 (25 features) with val macro-F1 = 0.8240
-Selected features: ['D3_lag1', 'D1_lag1', 'D2_lag1', 'None_lag1', 'D0_lag1', 'D2_lag2', 'D3_lag2', 'PREC_lag2', 'week_cos', 'None_lag2', 'T2M_roll4_mean', 'PREC_roll4_mean', 'D4_lag1', 'D4_lag2', 'T2M_roll12_mean', 'T2M_lag2', 'T2M_lag1', 'PREC_lag8', 'PRECTOTCORR', 'RH2M_lag1', 'D0_lag2', 'RH2M_lag2', 'T2M_lag4', 'T2M_lag8', 'PREC_lag1']
+Best subset selected: Top-20 (20 features) with val macro-F1 = 0.8106
+Selected features: ['D3_lag1', 'D2_lag1', 'D1_lag1', 'None_lag1', 'D3_lag2', 'PREC_lag1', 'D0_lag1', 'None_lag2', 'WS2M', 'week_cos', 'T2M_lag4', 'T2M_roll12_mean', 'T2M_lag1', 'week_sin', 'T2M_roll4_mean', 'PREC_lag4', 'PREC_lag8', 'D4_lag1', 'D4_lag2', 'T2M_lag2']
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.8470
-Val Macro F1 (raw/tuned): 0.8470 / 0.8511
-Class multipliers: [1.2024149894714355, 1.2084897756576538, 1.1549676656723022, 1.130113959312439, 0.9083167314529419, 1.2664843797683716]
-Accuracy (raw): 0.8060
-Macro F1 (raw): 0.8062
-Accuracy: 0.8062
-Macro F1: 0.8008
-Weighted F1: 0.8054
+Val Macro F1 (best trial): 0.8486
+Val Macro F1 (raw/tuned): 0.8486 / 0.8516
+Class multipliers: [1.0772126913070679, 1.1422404050827026, 1.138655424118042, 0.7459900975227356, 0.6103058457374573, 1.0818976163864136]
+Accuracy (raw): 0.8132
+Macro F1 (raw): 0.8057
+Accuracy: 0.8129
+Macro F1: 0.7940
+Weighted F1: 0.8117
 
 Trial leaderboard:
-  ros_focal_inv_no_cw_128x64: 0.8470 (balancer=ROS)
-  ros_focal_no_cw_96x48: 0.8317 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.7665 (balancer=NONE)
+  ros_focal_no_cw_96x48: 0.8486 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.8220 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.7912 (balancer=NONE)
 
 Per-class F1 (raw):
-  None: 0.8987
-  D0: 0.7466
-  D1: 0.7698
-  D2: 0.7547
-  D3: 0.7529
-  D4: 0.9142
+  None: 0.9105
+  D0: 0.7796
+  D1: 0.7786
+  D2: 0.7261
+  D3: 0.7209
+  D4: 0.9185
 
 Per-class F1:
-  None: 0.8983
-  D0: 0.7519
-  D1: 0.7742
-  D2: 0.7616
-  D3: 0.7210
-  D4: 0.8980
+  None: 0.9119
+  D0: 0.7832
+  D1: 0.7872
+  D2: 0.7434
+  D3: 0.6727
+  D4: 0.8655
 
 Classification Report (raw):
               precision    recall  f1-score   support
 
-        None     0.8983    0.8991    0.8987      1150
-          D0     0.7593    0.7344    0.7466       975
-          D1     0.7760    0.7637    0.7698       948
-          D2     0.7595    0.7500    0.7547       560
-          D3     0.7121    0.7986    0.7529       288
-          D4     0.8845    0.9459    0.9142       259
+        None     0.9054    0.9157    0.9105      1150
+          D0     0.7737    0.7856    0.7796       975
+          D1     0.8145    0.7458    0.7786       948
+          D2     0.7403    0.7125    0.7261       560
+          D3     0.6667    0.7847    0.7209       288
+          D4     0.8826    0.9575    0.9185       259
 
-    accuracy                         0.8060      4180
-   macro avg     0.7983    0.8153    0.8062      4180
-weighted avg     0.8059    0.8060    0.8056      4180
+    accuracy                         0.8132      4180
+   macro avg     0.7972    0.8170    0.8057      4180
+weighted avg     0.8141    0.8132    0.8128      4180
 
 Classification Report:
               precision    recall  f1-score   support
 
-        None     0.8983    0.8983    0.8983      1150
-          D0     0.7594    0.7446    0.7519       975
-          D1     0.7838    0.7648    0.7742       948
-          D2     0.7453    0.7786    0.7616       560
-          D3     0.7538    0.6910    0.7210       288
-          D4     0.8367    0.9691    0.8980       259
+        None     0.9100    0.9139    0.9119      1150
+          D0     0.7738    0.7928    0.7832       975
+          D1     0.7940    0.7806    0.7872       948
+          D2     0.7815    0.7089    0.7434       560
+          D3     0.7019    0.6458    0.6727       288
+          D4     0.7819    0.9691    0.8655       259
 
-    accuracy                         0.8062      4180
-   macro avg     0.7962    0.8077    0.8008      4180
-weighted avg     0.8056    0.8062    0.8054      4180
+    accuracy                         0.8129      4180
+   macro avg     0.7905    0.8019    0.7940      4180
+weighted avg     0.8124    0.8129    0.8117      4180
