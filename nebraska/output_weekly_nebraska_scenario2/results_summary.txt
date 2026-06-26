@@ -4,10 +4,10 @@ Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_cla
 Seq Length: 52
 
 --- FEATURE SELECTION ---
-Baseline feature count: 41
+Baseline feature count: 39
 Correlation threshold: 0.9
-Final selected feature count: 15
-Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M']
+Final selected feature count: 14
+Selected features: ['PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M']
 
 --- RESULTS ---
 Val Macro F1 (best trial): 0.6092

@@ -4,7 +4,7 @@ Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_cla
 Seq Length: 52
 
 --- FEATURE SELECTION ---
-Baseline feature count: 41
+Baseline feature count: 39
 Baseline model (for ranking): none_focal_inv_cw_64x32, val macro-F1: 0.8261
 Feature ranking method: Permutation Importance (macro F1 on validation)
 Subset sizes evaluated: [30, 25, 20, 15, 10]
@@ -16,8 +16,8 @@ Subset evaluation results:
   Top-20: Validation Macro F1 = 0.7845
   Top-30: Validation Macro F1 = 0.3751
 
-Best subset selected: Top-10 (10 features) with val macro-F1 = 0.8240
-Selected features: ['D3_lag1', 'D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'severe_carryover_lag1', 'D2_lag2', 'PREC_lag1', 'drought_carryover_lag1', 'PREC_roll12_mean']
+Best subset selected: Top-8 (8 features) with val macro-F1 = 0.8240
+Selected features: ['D3_lag1', 'D2_lag1', 'None_lag1', 'D1_lag1', 'D0_lag1', 'D2_lag2', 'PREC_lag1', 'PREC_roll12_mean']
 
 --- RESULTS ---
 Val Macro F1 (best trial): 0.8320

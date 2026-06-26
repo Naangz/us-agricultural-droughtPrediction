@@ -1,4 +1,4 @@
-BiLSTM Weekly Nebraska Tuned (20 counties)
+BiLSTM Weekly Nebraska - Scenario 7: Drought History Only
 Best trial: ros_focal_no_cw_96x48
 Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': True, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52

@@ -33,6 +33,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KANSAS_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(ROOT_DIR, 'Integrated_weekly_KAN_20counties.csv')
 OUTPUT_FOLDER = os.path.join(KANSAS_DIR, 'output_weekly_kansas_20counties')
+SCENARIO_NAME = 'Scenario 1: Baseline'
 
 # Weekly setup
 SEQ_LENGTH = 52
@@ -119,8 +120,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['drought_carryover_lag1'] = df_fe['D0_lag1'] + df_fe['D1_lag1'] + 0.5 * df_fe['D2_lag1']
-df_fe['severe_carryover_lag1'] = df_fe['D3_lag1'] + df_fe['D4_lag1']
 df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
@@ -565,7 +564,7 @@ plt.show()
 # %% [code cell 15]
 summary_path = f'{OUTPUT_FOLDER}/results_summary.txt'
 with open(summary_path, 'w', encoding='utf-8') as f:
-    f.write('BiLSTM Weekly Kansas Tuned (20 counties)\n')
+    f.write(f'BiLSTM Weekly Kansas - {SCENARIO_NAME}\n')
     f.write(f'Best trial: {best_trial["name"]}\n')
     f.write(f'Best trial config: {best_trial}\n')
     f.write(f'Seq Length: {SEQ_LENGTH}\n')

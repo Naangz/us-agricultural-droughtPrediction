@@ -4,10 +4,10 @@ Best trial config: {'name': 'ros_focal_inv_no_cw_128x64', 'balancer': 'ROS', 'us
 Seq Length: 52
 
 --- FEATURE SELECTION ---
-Baseline feature count: 41
+Baseline feature count: 39
 Correlation threshold: 0.9
-Final selected feature count: 25
-Selected features: ['drought_carryover_lag1', 'D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2', 'PREC_lag1', 'PREC_lag4', 'PREC_roll4_std', 'WS2M', 'PS', 'PREC_lag8', 'D2_lag1', 'severe_carryover_lag1', 'D4_lag1', 'week_sin']
+Final selected feature count: 23
+Selected features: ['D0_lag1', 'RH2M_lag8', 'T2M', 'RH2M', 'RH2M_lag4', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag2', 'T2M_roll12_mean', 'ALLSKY_SFC_SW_DWN', 'RH2M_lag1', 'PREC_roll12_mean', 'PRECTOTCORR', 'PREC_lag2', 'PREC_lag1', 'PREC_lag4', 'PREC_roll4_std', 'WS2M', 'PS', 'PREC_lag8', 'D2_lag1', 'D4_lag1', 'week_sin']
 
 --- RESULTS ---
 Val Macro F1 (best trial): 0.8429
