@@ -12,6 +12,7 @@ Jalankan dari folder root project:
   python visualization/plot_scenario1_analysis.py
 """
 
+import ast
 import os
 import re
 import numpy as np
@@ -31,15 +32,44 @@ except ImportError:
 
 CLASSES = ['None', 'D0', 'D1', 'D2', 'D3', 'D4']
 N_CLASSES = 6
-
-SUMMARY_CANDIDATES = {
-    'kansas': [
-        os.path.join('kansas', 'output_weekly_kansas_20counties', 'results_summary.txt'),
-        os.path.join('kansas', 'output_weekly_kansas_20counties', 'results_summary - KAN.txt')],
-    'nebraska': [
-        os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'results_summary.txt'),
-        os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'NE_results_summary.txt'),
-        os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'results_summary - NEB.txt')],
+TRAIN_END_DATE = '2019-12-31'
+TEST_START_DATE = '2022-01-01'
+FEATURE_COLS = [
+    'ALLSKY_SFC_SW_DWN', 'PRECTOTCORR', 'PS', 'RH2M', 'T2M', 'WS2M',
+    'PREC_lag1', 'PREC_lag2', 'PREC_lag4', 'PREC_lag8',
+    'T2M_lag1', 'T2M_lag2', 'T2M_lag4', 'T2M_lag8',
+    'RH2M_lag1', 'RH2M_lag2', 'RH2M_lag4', 'RH2M_lag8',
+    'PREC_roll4_mean', 'PREC_roll4_std', 'PREC_roll12_mean', 'PREC_roll12_std',
+    'T2M_roll4_mean', 'T2M_roll12_mean',
+    'week_sin', 'week_cos',
+    'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
+    'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
+]
+PMF_COLS = ['PMF_None', 'PMF_D0', 'PMF_D1', 'PMF_D2', 'PMF_D3', 'PMF_D4']
+REGION_CONFIGS = {
+    'kansas': {
+        'display_name': 'Kansas',
+        'dataset_path': 'Integrated_weekly_KAN_20counties.csv',
+        'summary_candidates': [
+            os.path.join('kansas', 'output_weekly_kansas_20counties', 'results_summary.txt'),
+            os.path.join('kansas', 'output_weekly_kansas_20counties', 'results_summary - KAN.txt'),
+        ],
+        'model_candidates': [
+            os.path.join('kansas', 'output_weekly_kansas_20counties', 'best_model.keras'),
+        ],
+    },
+    'nebraska': {
+        'display_name': 'Nebraska',
+        'dataset_path': 'Integrated_weekly_NEB_20counties.csv',
+        'summary_candidates': [
+            os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'results_summary.txt'),
+            os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'NE_results_summary.txt'),
+            os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'results_summary - NEB.txt'),
+        ],
+        'model_candidates': [
+            os.path.join('nebraska', 'output_weekly_nebraska_20counties', 'best_model.keras'),
+        ],
+    },
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -62,17 +92,127 @@ def compute_predicted_counts(precision_arr, recall_arr, support_arr):
             predicted.append(int(round(pred_total)))
     return predicted
 
+def get_latest_existing_path(candidates, description):
+    """
+    Mengambil file kandidat terbaru berdasarkan waktu modifikasi.
+    """
+    existing = [candidate for candidate in candidates if os.path.exists(candidate)]
+    if not existing:
+        raise FileNotFoundError(
+            f"Tidak menemukan {description}. Kandidat yang dicek: {candidates}"
+        )
+    return max(existing, key=os.path.getmtime)
+
 def get_summary_path(region):
-    """
-    Mengambil path hasil training baseline yang tersedia untuk suatu wilayah.
-    """
-    for candidate in SUMMARY_CANDIDATES[region]:
-        if os.path.exists(candidate):
-            return candidate
-    raise FileNotFoundError(
-        f"Tidak menemukan results_summary baseline untuk wilayah '{region}'. "
-        f"Kandidat yang dicek: {SUMMARY_CANDIDATES[region]}"
+    return get_latest_existing_path(
+        REGION_CONFIGS[region]['summary_candidates'],
+        f"results_summary baseline untuk wilayah '{region}'"
     )
+
+def get_model_path(region):
+    return get_latest_existing_path(
+        REGION_CONFIGS[region]['model_candidates'],
+        f"best_model baseline untuk wilayah '{region}'"
+    )
+
+def decumulate_drought(row):
+    pmf_d4 = row['D4']
+    pmf_d3 = max(0.0, row['D3'] - row['D4'])
+    pmf_d2 = max(0.0, row['D2'] - row['D3'])
+    pmf_d1 = max(0.0, row['D1'] - row['D2'])
+    pmf_d0 = max(0.0, row['D0'] - row['D1'])
+    pmf_none = max(0.0, row['None'])
+    return [pmf_none, pmf_d0, pmf_d1, pmf_d2, pmf_d3, pmf_d4]
+
+def build_feature_frame(region):
+    import pandas as pd
+    from sklearn.preprocessing import MinMaxScaler
+
+    data_path = REGION_CONFIGS[region]['dataset_path']
+    df = pd.read_csv(data_path)
+    df['week_start'] = pd.to_datetime(df['week_start'])
+    df = df.sort_values(['FIPS', 'week_start']).reset_index(drop=True)
+    df[PMF_COLS] = df.apply(lambda row: decumulate_drought(row), axis=1, result_type='expand')
+    df['Label'] = df[PMF_COLS].idxmax(axis=1).apply(lambda x: PMF_COLS.index(x))
+
+    df_fe = df.copy().sort_values(['FIPS', 'week_start']).reset_index(drop=True)
+    for lag in [1, 2, 4, 8]:
+        df_fe[f'PREC_lag{lag}'] = df_fe.groupby('FIPS')['PRECTOTCORR'].shift(lag)
+        df_fe[f'T2M_lag{lag}'] = df_fe.groupby('FIPS')['T2M'].shift(lag)
+        df_fe[f'RH2M_lag{lag}'] = df_fe.groupby('FIPS')['RH2M'].shift(lag)
+
+    for window in [4, 12]:
+        df_fe[f'PREC_roll{window}_mean'] = df_fe.groupby('FIPS')['PRECTOTCORR'].transform(
+            lambda x: x.shift(1).rolling(window, min_periods=1).mean()
+        )
+        df_fe[f'PREC_roll{window}_std'] = df_fe.groupby('FIPS')['PRECTOTCORR'].transform(
+            lambda x: x.shift(1).rolling(window, min_periods=1).std().fillna(0.0)
+        )
+        df_fe[f'T2M_roll{window}_mean'] = df_fe.groupby('FIPS')['T2M'].transform(
+            lambda x: x.shift(1).rolling(window, min_periods=1).mean()
+        )
+
+    iso_week = df_fe['week_start'].dt.isocalendar().week.astype(int)
+    df_fe['week_sin'] = np.sin(2 * np.pi * iso_week / 52.0)
+    df_fe['week_cos'] = np.cos(2 * np.pi * iso_week / 52.0)
+
+    for col in CLASSES:
+        df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
+        df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
+
+    df_fe = df_fe.dropna(subset=FEATURE_COLS + ['Label']).reset_index(drop=True)
+    train_df = df_fe[df_fe['week_start'] <= TRAIN_END_DATE].copy()
+    scaler = MinMaxScaler()
+    scaler.fit(train_df[FEATURE_COLS])
+    df_fe.loc[:, FEATURE_COLS] = scaler.transform(df_fe[FEATURE_COLS])
+    return df_fe
+
+def create_sequences_from_df(df_input, seq_length):
+    import pandas as pd
+
+    features = []
+    labels = []
+    for _, group in df_input.groupby('FIPS'):
+        group = group.sort_values('week_start')
+        feat_values = group[FEATURE_COLS].values
+        label_values = group['Label'].values
+        dates = group['week_start'].values
+        if len(group) < seq_length:
+            continue
+        for i in range(seq_length - 1, len(group)):
+            target_date = pd.Timestamp(dates[i])
+            if target_date < pd.Timestamp(TEST_START_DATE):
+                continue
+            features.append(feat_values[i - seq_length + 1:i + 1])
+            labels.append(int(label_values[i]))
+    return np.array(features), np.array(labels)
+
+def compute_exact_predicted_counts(region, parsed_summary):
+    import tensorflow as tf
+
+    if parsed_summary['seq_length'] is None or parsed_summary['class_multipliers'] is None:
+        raise ValueError('Metadata seq_length atau class_multipliers tidak tersedia di summary.')
+
+    feature_frame = build_feature_frame(region)
+    x_test, y_test = create_sequences_from_df(feature_frame, parsed_summary['seq_length'])
+    if len(y_test) != parsed_summary['total']:
+        raise ValueError(
+            f"Jumlah sampel inference ({len(y_test)}) tidak sama dengan total summary ({parsed_summary['total']})."
+        )
+
+    model_path = get_model_path(region)
+    model = tf.keras.models.load_model(model_path, compile=False)
+    class_multipliers = np.array(parsed_summary['class_multipliers'], dtype=float)
+    y_pred_prob = model.predict(x_test, verbose=0)
+    y_pred = np.argmax(y_pred_prob * class_multipliers, axis=1)
+
+    actual_counts = np.bincount(y_test, minlength=N_CLASSES).tolist()
+    predicted_counts = np.bincount(y_pred, minlength=N_CLASSES).tolist()
+    if actual_counts != parsed_summary['support']:
+        raise ValueError(
+            f"Distribusi aktual hasil inference {actual_counts} tidak sama dengan summary {parsed_summary['support']}."
+        )
+    return predicted_counts
 
 def parse_scenario1_summary(summary_path):
     """
@@ -86,6 +226,10 @@ def parse_scenario1_summary(summary_path):
     if not macro_matches:
         raise ValueError(f"Gagal menemukan Macro F1 pada file: {summary_path}")
     macro_f1 = float(macro_matches[-1])
+    summary_title = content.splitlines()[0].strip() if content.splitlines() else os.path.basename(summary_path)
+    seq_length_match = re.search(r'^\s*Seq Length:\s*(\d+)\s*$', content, flags=re.MULTILINE)
+    class_multipliers_match = re.search(r'^\s*Class multipliers:\s*(\[[^\]]+\])\s*$', content, flags=re.MULTILINE)
+    best_trial_match = re.search(r'^\s*Best trial:\s*(.+?)\s*$', content, flags=re.MULTILINE)
 
     perclass_f1 = {}
     perclass_block_match = re.search(
@@ -97,9 +241,21 @@ def parse_scenario1_summary(summary_path):
         for cls_name, value in re.findall(r'^\s*(None|D0|D1|D2|D3|D4):\s*([\d.]+)\s*$', perclass_block_match.group(1), flags=re.MULTILINE):
             perclass_f1[cls_name] = float(value)
 
+    final_report_match = re.search(
+        r'^\s*CLASSIFICATION REPORT\s*$'
+        r'(?:\r?\n^\s*=+\s*$)?'
+        r'(.*?)'
+        r'^\s*=+\s*$',
+        content,
+        flags=re.MULTILINE | re.DOTALL
+    )
+    if not final_report_match:
+        raise ValueError(f"Gagal menemukan blok CLASSIFICATION REPORT final pada file: {summary_path}")
+    final_report = final_report_match.group(1)
+
     class_report_rows = re.findall(
         r'^\s*(None|D0|D1|D2|D3|D4)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+(\d+)\s*$',
-        content,
+        final_report,
         flags=re.MULTILINE
     )
     if len(class_report_rows) != N_CLASSES:
@@ -121,12 +277,17 @@ def parse_scenario1_summary(summary_path):
     predicted = compute_predicted_counts(precision, recall, support)
     return {
         'summary_path': summary_path,
+        'summary_title': summary_title,
+        'best_trial': best_trial_match.group(1).strip() if best_trial_match else None,
+        'seq_length': int(seq_length_match.group(1)) if seq_length_match else None,
+        'class_multipliers': ast.literal_eval(class_multipliers_match.group(1)) if class_multipliers_match else None,
         'macro_f1': macro_f1,
         'precision': precision,
         'recall': recall,
         'support': support,
         'f1_scores': f1_scores,
         'predicted': predicted,
+        'predicted_source': 'classification_report_estimate',
         'total': sum(support),
     }
 
@@ -138,9 +299,16 @@ def load_region_data():
     for region in ['kansas', 'nebraska']:
         summary_path = get_summary_path(region)
         parsed = parse_scenario1_summary(summary_path)
+        try:
+            parsed['predicted'] = compute_exact_predicted_counts(region, parsed)
+            parsed['predicted_source'] = 'exact_model_inference'
+        except Exception as exc:
+            print(f"  Peringatan: gagal hitung prediksi exact untuk {REGION_CONFIGS[region]['display_name']}: {exc}")
+            print("  Fallback ke estimasi dari classification report.")
         data[region] = parsed
-        print(f"Memuat baseline {region.title()} dari: {summary_path}")
+        print(f"Memuat baseline {REGION_CONFIGS[region]['display_name']} dari: {summary_path}")
         print(f"  Macro F1 = {parsed['macro_f1']:.4f}")
+        print(f"  Sumber distribusi prediksi = {parsed['predicted_source']}")
     return data
 
 # ─────────────────────────────────────────────────────────────────────────────

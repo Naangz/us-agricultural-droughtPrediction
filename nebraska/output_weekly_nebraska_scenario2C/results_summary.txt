@@ -4,7 +4,7 @@ Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_cla
 Seq Length: 52
 
 --- FEATURE SELECTION ---
-Baseline feature count: 41
+Baseline feature count: 38
 Correlation threshold: 0.9
 Feature-model CSV (mutual information): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/feature_model_mutual_information.csv
 Feature-feature CSV (all abs correlations): /home/kagami/Documents/enhprota/nebraska/output_weekly_nebraska_scenario2C/feature_feature_abs_correlation_all.csv

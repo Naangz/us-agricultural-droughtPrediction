@@ -8,8 +8,6 @@ The table below summarizes the key test and validation metrics for each scenario
 
 | Scenario / File | Best Trial | Features | Val F1 | Test Acc (Raw) | Test F1 (Raw) | Test Acc (Tuned) | Test F1 (Tuned) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Baseline (20 counties)** (NE_results_summary.txt) | ros_focal_no_cw_96x48 | All | 0.8578 / 0.8687 | 0.8136 | 0.8104 | 0.8201 | 0.8173 |
-| **Baseline (20 counties)** (results_summary - NEB.txt) | ros_focal_no_cw_96x48 | All | 0.8578 / 0.8687 | 0.8136 | 0.8104 | 0.8201 | 0.8173 |
 | **Baseline (20 counties)** | ros_focal_no_cw_96x48 | All | 0.8514 / 0.8641 | 0.8077 | 0.7958 | 0.7969 | 0.7718 |
 | **Scenario 2 (Correlation Top-15)** | ros_focal_no_cw_96x48 | 15 | 0.4707 / 0.4932 | 0.4340 | 0.3892 | 0.4124 | 0.3428 |
 | **Scenario 2A (Correlation Top-20)** | ros_focal_no_cw_96x48 | All | 0.4832 / 0.5086 | 0.4529 | 0.3962 | 0.4438 | 0.3802 |
@@ -24,101 +22,6 @@ The table below summarizes the key test and validation metrics for each scenario
 ---
 
 ## 🔍 Detailed Scenario Breakdown
-
-### 📌 Baseline (20 counties) (NE_results_summary.txt)
-- **Summary File:** `output_weekly_nebraska_20counties/NE_results_summary.txt`
-- **Best Trial:** `ros_focal_no_cw_96x48`
-- **Best Trial Config:**
-  ```python
-  {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
-  ```
-- **Selected Features:** None / Full Feature Set (41 features)
-- **Class Multipliers (None, D0, D1, D2, D3, D4):**
-  `1.636890`, `1.461624`, `1.007362`, `0.915742`, `0.961145`, `1.070525`
-
-#### Performance Metrics
-| Metric | Raw / Baseline | Tuned (Tuned Multipliers) |
-| :--- | :---: | :---: |
-| **Validation Macro F1** | 0.8578 | 0.8687 |
-| **Test Accuracy** | 0.8136 | 0.8201 |
-| **Test Macro F1** | 0.8104 | 0.8173 |
-| **Test Weighted F1** | 0.8219 | - |
-
-#### Per-Class F1 Score
-| Class | Raw F1 | Tuned F1 |
-| :--- | :---: | :---: |
-| **None** | 0.9158 | - |
-| **D0** | 0.7402 | - |
-| **D1** | 0.8058 | - |
-| **D2** | 0.8056 | - |
-| **D3** | 0.7821 | - |
-| **D4** | 0.8544 | - |
-
-#### Classification Report (Raw)
-```
-precision    recall  f1-score   support
-
-        None     0.9443    0.8890    0.9158       973
-          D0     0.6910    0.7971    0.7402       547
-          D1     0.8515    0.7647    0.8058       952
-          D2     0.8395    0.7743    0.8056      1081
-          D3     0.6898    0.9027    0.7821       473
-          D4     0.8333    0.8766    0.8544       154
-
-    accuracy                         0.8201      4180
-   macro avg     0.8082    0.8341    0.8173      4180
-weighted avg     0.8300    0.8201    0.8219      4180
-```
-
----
-
-### 📌 Baseline (20 counties) (results_summary - NEB.txt)
-- **Summary File:** `output_weekly_nebraska_20counties/results_summary - NEB.txt`
-- **Best Trial:** `ros_focal_no_cw_96x48`
-- **Best Trial Config:**
-  ```python
-  {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
-  ```
-- **Selected Features:** None / Full Feature Set (41 features)
-- **Class Multipliers (None, D0, D1, D2, D3, D4):**
-  `1.636890`, `1.461624`, `1.007362`, `0.915742`, `0.961145`, `1.070525`
-
-#### Performance Metrics
-| Metric | Raw / Baseline | Tuned (Tuned Multipliers) |
-| :--- | :---: | :---: |
-| **Validation Macro F1** | 0.8578 | 0.8687 |
-| **Test Accuracy** | 0.8136 | 0.8201 |
-| **Test Macro F1** | 0.8104 | 0.8173 |
-| **Test Weighted F1** | 0.8156 | 0.8219 |
-
-#### Per-Class F1 Score
-| Class | Raw F1 | Tuned F1 |
-| :--- | :---: | :---: |
-| **None** | 0.9158 | - |
-| **D0** | 0.7402 | - |
-| **D1** | 0.8058 | - |
-| **D2** | 0.8056 | - |
-| **D3** | 0.7821 | - |
-| **D4** | 0.8544 | - |
-
-#### Classification Report (Raw)
-```
-======================================================================
-              precision    recall  f1-score   support
-
-        None     0.9443    0.8890    0.9158       973
-          D0     0.6910    0.7971    0.7402       547
-          D1     0.8515    0.7647    0.8058       952
-          D2     0.8395    0.7743    0.8056      1081
-          D3     0.6898    0.9027    0.7821       473
-          D4     0.8333    0.8766    0.8544       154
-
-    accuracy                         0.8201      4180
-   macro avg     0.8082    0.8341    0.8173      4180
-weighted avg     0.8300    0.8201    0.8219      4180
-```
-
----
 
 ### 📌 Baseline (20 counties)
 - **Summary File:** `output_weekly_nebraska_20counties/results_summary.txt`

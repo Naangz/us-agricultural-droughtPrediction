@@ -1,4 +1,4 @@
-BiLSTM Weekly Kansas Tuned (20 counties)
+BiLSTM Weekly Kansas Scenario 5
 Best trial: none_focal_inv_cw_64x32
 Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
 Seq Length: 52

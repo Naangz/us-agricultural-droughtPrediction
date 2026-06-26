@@ -111,8 +111,7 @@ def main():
             'f1': kansas_f1,
             'color': '#0288D1', # Deep Sky Blue
             'marker': 'o',
-            'jump_text': 'Kansas jump: +36.38% F1\n(0.4376 \u2192 0.8014)',
-            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag1\n- week_sin, PREC_lag8'
+            
         },
         {
             'name': 'Nebraska',
@@ -120,8 +119,7 @@ def main():
             'f1': nebraska_f1,
             'color': '#F57C00', # Vibrant Orange
             'marker': 's', # Square marker
-            'jump_text': 'Nebraska jump: +25.75% F1\n(0.4942 \u2192 0.7517)',
-            'key_features': 'Key features added in Scenario 2B:\n- D2_lag1, D4_lag2\n- D0_lag2, PREC_lag4'
+          
         }
     ]
     
@@ -144,18 +142,6 @@ def main():
                         xytext=(0, 10), ha='center', fontweight='bold', fontsize=9.5,
                         bbox=dict(boxstyle="round,pad=0.2", fc="yellow", alpha=0.3, ec="none"))
             
-        # Draw arrow to show the dramatic jump
-        ax.annotate(r['jump_text'], 
-                    xy=(22.5, (r['f1'][1] + r['f1'][2])/2), 
-                    xytext=(16, 0.65),
-                    arrowprops=dict(facecolor='#2E7D32', shrink=0.08, width=2, headwidth=8, headlength=8),
-                    fontsize=10.5, color='#1B5E20', fontweight='bold',
-                    bbox=dict(boxstyle="round,pad=0.3", fc="#E8F5E9", ec="#2E7D32", lw=1))
-        
-        # Display explanatory text block about added features
-        ax.text(15.2, 0.76, r['key_features'], fontsize=9, color='#333333',
-                bbox=dict(boxstyle="round,pad=0.4", fc="#F1F8E9", ec="#81C784", lw=0.8))
-        
         # Titles and limits
         ax.set_title(f"Wilayah {r['name']}", fontweight='bold', pad=12)
         ax.set_xlabel("Jumlah Fitur (Number of Features)", labelpad=8)
