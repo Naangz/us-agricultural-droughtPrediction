@@ -1,8 +1,9 @@
 BiLSTM Weekly Kansas - Scenario 1: Baseline
 Best trial: ros_focal_no_cw_96x48
 Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Best model path: F:\Projectan\TA_new\enhprota\kansas\output_weekly_kansas_20counties\best_model.keras
 Seq Length: 52
-Val Macro F1 (best trial): 0.8480
+Feature count: 39
 Val Macro F1 (raw/tuned): 0.8480 / 0.8536
 Class multipliers: [1.7999999523162842, 1.1255494356155396, 0.8058606386184692, 0.8119803667068481, 0.7536675333976746, 1.3244149684906006]
 Selected features:
@@ -45,6 +46,8 @@ Selected features:
   D3_lag2
   D4_lag2
   heat_dry_stress
+
+--- RESULTS ---
 Accuracy (raw): 0.8177
 Macro F1 (raw): 0.8166
 Weighted F1 (raw): 0.8186
@@ -52,12 +55,15 @@ Accuracy (tuned): 0.8014
 Macro F1 (tuned): 0.7921
 Weighted F1 (tuned): 0.7990
 
-Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.8480 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.8440 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.8358 (balancer=NONE)
+Per-class F1 (raw):
+  None: 0.9022
+  D0: 0.7773
+  D1: 0.7804
+  D2: 0.7721
+  D3: 0.7653
+  D4: 0.9026
 
-Per-class F1:
+Per-class F1 (tuned):
   None: 0.8969
   D0: 0.7468
   D1: 0.7571
@@ -66,7 +72,23 @@ Per-class F1:
   D4: 0.8720
 
 ======================================================================
-CLASSIFICATION REPORT
+CLASSIFICATION REPORT (RAW)
+======================================================================
+              precision    recall  f1-score   support
+
+        None     0.9323    0.8739    0.9022      1150
+          D0     0.7495    0.8072    0.7773       975
+          D1     0.7989    0.7627    0.7804       948
+          D2     0.7640    0.7804    0.7721       560
+          D3     0.7500    0.7812    0.7653       288
+          D4     0.8764    0.9305    0.9026       259
+
+    accuracy                         0.8177      4180
+   macro avg     0.8118    0.8226    0.8166      4180
+weighted avg     0.8208    0.8177    0.8186      4180
+
+======================================================================
+CLASSIFICATION REPORT (TUNED)
 ======================================================================
               precision    recall  f1-score   support
 
@@ -81,11 +103,4 @@ CLASSIFICATION REPORT
    macro avg     0.7909    0.8001    0.7921      4180
 weighted avg     0.8014    0.8014    0.7990      4180
 
-======================================================================
-Accuracy (raw):    0.8177
-Macro F1 (raw):    0.8166
-Weighted F1 (raw): 0.8186
-Accuracy (tuned):    0.8014
-Macro F1 (tuned):    0.7921
-Weighted F1 (tuned): 0.7990
 ======================================================================

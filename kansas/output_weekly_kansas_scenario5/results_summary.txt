@@ -1,8 +1,9 @@
-BiLSTM Weekly Kansas - Scenario 5: Weather + Lag Only
+BiLSTM Weekly Kansas - Scenario 5 - Weather + Lag Only
 Best trial: none_focal_inv_cw_64x32
 Best trial config: {'name': 'none_focal_inv_cw_64x32', 'balancer': 'NONE', 'use_class_weight': True, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (64, 32), 'dropout': 0.35, 'dense_units': 64, 'lr': 0.001, 'patience': 16}
+Best model path: F:\Projectan\TA_new\enhprota\kansas\output_weekly_kansas_scenario5\best_model.keras
 Seq Length: 52
-Val Macro F1 (best trial): 0.2068
+Feature count: 20
 Val Macro F1 (raw/tuned): 0.2068 / 0.2498
 Class multipliers: [1.7999999523162842, 0.6552096605300903, 0.8391038179397583, 0.8592265844345093, 1.7999999523162842, 0.6729795336723328]
 Selected features:
@@ -26,6 +27,8 @@ Selected features:
   RH2M_lag8
   week_sin
   week_cos
+
+--- RESULTS ---
 Accuracy (raw): 0.1718
 Macro F1 (raw): 0.1380
 Weighted F1 (raw): 0.1625
@@ -33,12 +36,15 @@ Accuracy (tuned): 0.1715
 Macro F1 (tuned): 0.1152
 Weighted F1 (tuned): 0.1532
 
-Trial leaderboard:
-  none_focal_inv_cw_64x32: 0.2068 (balancer=NONE)
-  ros_focal_no_cw_96x48: 0.2014 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.1964 (balancer=ROS)
+Per-class F1 (raw):
+  None: 0.1603
+  D0: 0.1939
+  D1: 0.2634
+  D2: 0.0000
+  D3: 0.0643
+  D4: 0.1458
 
-Per-class F1:
+Per-class F1 (tuned):
   None: 0.4184
   D0: 0.0000
   D1: 0.1209
@@ -46,7 +52,25 @@ Per-class F1:
   D3: 0.1485
   D4: 0.0000
 
-Classification Report:
+======================================================================
+CLASSIFICATION REPORT (RAW)
+======================================================================
+              precision    recall  f1-score   support
+
+        None     0.6562    0.0913    0.1603      1150
+          D0     0.2860    0.1467    0.1939       975
+          D1     0.2108    0.3513    0.2634       948
+          D2     0.0000    0.0000    0.0000       560
+          D3     0.0437    0.1215    0.0643       288
+          D4     0.0895    0.3938    0.1458       259
+
+    accuracy                         0.1718      4180
+   macro avg     0.2144    0.1841    0.1380      4180
+weighted avg     0.3036    0.1718    0.1625      4180
+
+======================================================================
+CLASSIFICATION REPORT (TUNED)
+======================================================================
               precision    recall  f1-score   support
 
         None     0.5529    0.3365    0.4184      1150
@@ -59,3 +83,5 @@ Classification Report:
     accuracy                         0.1715      4180
    macro avg     0.1608    0.2174    0.1152      4180
 weighted avg     0.2281    0.1715    0.1532      4180
+
+======================================================================

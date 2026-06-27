@@ -1,17 +1,11 @@
 BiLSTM Weekly Kansas - Scenario 2: Correlation-aware Feature Selection
 Best trial: ros_focal_inv_no_cw_128x64
 Best trial config: {'name': 'ros_focal_inv_no_cw_128x64', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (128, 64), 'dropout': 0.28, 'dense_units': 96, 'lr': 0.0006, 'patience': 14}
+Best model path: F:\Projectan\TA_new\enhprota\kansas\output_weekly_kansas_scenario2\best_model.keras
 Seq Length: 52
-
---- FEATURE SELECTION ---
-Baseline feature count: 41
-Correlation threshold: 0.9
-Feature-model CSV (mutual information): /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario2/feature_model_mutual_information.csv
-Feature-feature CSV (all abs correlations): /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario2/feature_feature_abs_correlation_all.csv
-Feature-feature CSV (selected abs correlations): /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario2/feature_feature_abs_correlation_selected.csv
-Selected ranking CSV: /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario2/selected_feature_ranking.csv
-Pruned pairs CSV: /home/kagami/Documents/enhprota/kansas/output_weekly_kansas_scenario2/pruned_feature_pairs.csv
-Final selected feature count: 15
+Feature count: 15
+Val Macro F1 (raw/tuned): 0.6338 / 0.6847
+Class multipliers: [0.687532901763916, 0.8795230388641357, 1.0119997262954712, 0.8031442761421204, 1.0250754356384277, 1.0201678276062012]
 Selected features:
   D1_lag1
   None_lag1
@@ -28,28 +22,8 @@ Selected features:
   RH2M_lag1
   PREC_roll4_std
   PREC_roll12_mean
-Selected feature ranking (correlation-aware):
-  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to
-   1 | D1_lag1 | 0.635589 | 0.0000 | -
-   2 | None_lag1 | 0.607588 | 0.7171 | D1_lag1
-   3 | RH2M | 0.551027 | 0.3025 | D1_lag1
-   4 | PREC_roll12_std | 0.547931 | 0.3903 | None_lag1
-   5 | T2M | 0.546825 | 0.3825 | PREC_roll12_std
-   6 | T2M_lag4 | 0.541936 | 0.8172 | T2M
-   7 | RH2M_lag4 | 0.541192 | 0.4474 | RH2M
-   8 | PREC_roll4_mean | 0.540850 | 0.6265 | PREC_roll12_std
-   9 | RH2M_lag2 | 0.539936 | 0.5160 | RH2M_lag4
-  10 | PRECTOTCORR | 0.539901 | 0.3856 | T2M
-  11 | RH2M_lag8 | 0.539824 | 0.4540 | RH2M_lag4
-  12 | PREC_lag2 | 0.539322 | 0.7075 | PREC_roll4_mean
-  13 | RH2M_lag1 | 0.538932 | 0.6639 | RH2M_lag2
-  14 | PREC_roll4_std | 0.538862 | 0.7739 | PREC_roll4_mean
-  15 | PREC_roll12_mean | 0.537214 | 0.8350 | PREC_roll12_std
 
 --- RESULTS ---
-Val Macro F1 (best trial): 0.6338
-Val Macro F1 (raw/tuned): 0.6338 / 0.6847
-Class multipliers: [0.687532901763916, 0.8795230388641357, 1.0119997262954712, 0.8031442761421204, 1.0250754356384277, 1.0201678276062012]
 Accuracy (raw): 0.6100
 Macro F1 (raw): 0.4795
 Weighted F1 (raw): 0.6099
@@ -57,12 +31,15 @@ Accuracy (tuned): 0.6081
 Macro F1 (tuned): 0.4754
 Weighted F1 (tuned): 0.6101
 
-Trial leaderboard:
-  ros_focal_inv_no_cw_128x64: 0.6338 (balancer=ROS)
-  ros_focal_no_cw_96x48: 0.6235 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.3786 (balancer=NONE)
+Per-class F1 (raw):
+  None: 0.8906
+  D0: 0.7384
+  D1: 0.5221
+  D2: 0.3765
+  D3: 0.3100
+  D4: 0.0394
 
-Per-class F1:
+Per-class F1 (tuned):
   None: 0.8895
   D0: 0.7445
   D1: 0.5522
@@ -70,7 +47,25 @@ Per-class F1:
   D3: 0.3052
   D4: 0.0395
 
-Classification Report:
+======================================================================
+CLASSIFICATION REPORT (RAW)
+======================================================================
+              precision    recall  f1-score   support
+
+        None     0.8756    0.9061    0.8906      1150
+          D0     0.7521    0.7251    0.7384       975
+          D1     0.6250    0.4483    0.5221       948
+          D2     0.3118    0.4750    0.3765       560
+          D3     0.2757    0.3542    0.3100       288
+          D4     0.0544    0.0309    0.0394       259
+
+    accuracy                         0.6100      4180
+   macro avg     0.4824    0.4899    0.4795      4180
+weighted avg     0.6222    0.6100    0.6099      4180
+
+======================================================================
+CLASSIFICATION REPORT (TUNED)
+======================================================================
               precision    recall  f1-score   support
 
         None     0.9084    0.8713    0.8895      1150
@@ -83,3 +78,5 @@ Classification Report:
     accuracy                         0.6081      4180
    macro avg     0.4738    0.4881    0.4754      4180
 weighted avg     0.6176    0.6081    0.6101      4180
+
+======================================================================
