@@ -610,11 +610,13 @@ y_pred = np.argmax(y_pred_prob * class_multipliers, axis=1)
 present_classes = sorted(set(y_test) | set(y_pred))
 target_names = [label_map[i] for i in present_classes]
 
+report_raw = classification_report(y_test, y_pred_raw, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 report = classification_report(y_test, y_pred, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 accuracy = accuracy_score(y_test, y_pred)
 macro_f1 = f1_score(y_test, y_pred, average='macro', zero_division=0)
 weighted_f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
 macro_f1_raw = f1_score(y_test, y_pred_raw, average='macro', zero_division=0)
+weighted_f1_raw = f1_score(y_test, y_pred_raw, average='weighted', zero_division=0)
 accuracy_raw = accuracy_score(y_test, y_pred_raw)
 
 print('=' * 70)
@@ -656,6 +658,7 @@ plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/confusion_matrix.png', dpi=140)
 plt.show()
 
+per_class_f1_raw = f1_score(y_test, y_pred_raw, labels=list(range(num_classes)), average=None, zero_division=0)
 per_class_f1 = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
 fig, ax = plt.subplots(figsize=(10, 5))
 bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1)
@@ -686,7 +689,9 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'Selected ranking CSV: {selected_ranking_csv_path}\n')
     f.write(f'Pruned pairs CSV: {pruned_pairs_csv_path}\n')
     f.write(f'Final selected feature count: {len(feature_cols_corr)}\n')
-    f.write(f'Selected features: {feature_cols_corr}\n')
+    f.write('Selected features:\n')
+    for feat in feature_cols_corr:
+        f.write(f'  {feat}\n')
     f.write('Selected feature ranking (correlation-aware):\n')
     f.write('  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to\n')
     for rank, row in enumerate(selected_feature_ranking, 1):
@@ -700,17 +705,23 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'Class multipliers: {class_multipliers.tolist()}\n')
     f.write(f'Accuracy (raw): {accuracy_raw:.4f}\n')
     f.write(f'Macro F1 (raw): {macro_f1_raw:.4f}\n')
-    f.write(f'Accuracy: {accuracy:.4f}\n')
-    f.write(f'Macro F1: {macro_f1:.4f}\n')
-    f.write(f'Weighted F1: {weighted_f1:.4f}\n\n')
+    f.write(f'Weighted F1 (raw): {weighted_f1_raw:.4f}\n')
+    f.write(f'Accuracy (tuned): {accuracy:.4f}\n')
+    f.write(f'Macro F1 (tuned): {macro_f1:.4f}\n')
+    f.write(f'Weighted F1 (tuned): {weighted_f1:.4f}\n\n')
     f.write('Trial leaderboard:\n')
     for row in sorted(trial_results, key=lambda x: x['val_macro_f1'], reverse=True):
         f.write(f'  {row["name"]}: {row["val_macro_f1"]:.4f} (balancer={row["balancer"]})\n')
     f.write('\n')
-    f.write('Per-class F1:\n')
+    f.write('Per-class F1 (raw):\n')
+    for i in range(num_classes):
+        f.write(f'  {label_map[i]}: {per_class_f1_raw[i]:.4f}\n')
+    f.write('\nPer-class F1 (tuned):\n')
     for i in range(num_classes):
         f.write(f'  {label_map[i]}: {per_class_f1[i]:.4f}\n')
-    f.write('\nClassification Report:\n')
+    f.write('\nClassification Report (raw):\n')
+    f.write(report_raw)
+    f.write('\nClassification Report (tuned):\n')
     f.write(report)
 
 print(f'Feature-model mutual information saved to {mi_scores_csv_path}')

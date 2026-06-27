@@ -20,9 +20,10 @@ Selected features:
   D4_lag2
 Accuracy (raw): 0.8177
 Macro F1 (raw): 0.8202
-Accuracy: 0.8246
-Macro F1: 0.8289
-Weighted F1: 0.8240
+Weighted F1 (raw): 0.8181
+Accuracy (tuned): 0.8246
+Macro F1 (tuned): 0.8289
+Weighted F1 (tuned): 0.8240
 
 Trial leaderboard:
   ros_focal_inv_no_cw_128x64: 0.8446 (balancer=ROS)
@@ -36,7 +37,6 @@ Per-class F1:
   D2: 0.8062
   D3: 0.7891
   D4: 0.9294
-
 
 Per-class Accuracy:
   None: 0.9096

@@ -28,9 +28,10 @@ Selected features:
   week_cos
 Accuracy (raw): 0.1718
 Macro F1 (raw): 0.1380
-Accuracy: 0.1715
-Macro F1: 0.1152
-Weighted F1: 0.1532
+Weighted F1 (raw): 0.1625
+Accuracy (tuned): 0.1715
+Macro F1 (tuned): 0.1152
+Weighted F1 (tuned): 0.1532
 
 Trial leaderboard:
   none_focal_inv_cw_64x32: 0.2068 (balancer=NONE)

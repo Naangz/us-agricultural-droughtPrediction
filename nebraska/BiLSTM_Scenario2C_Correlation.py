@@ -26,6 +26,15 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, Input, BatchNormalization
 from tensorflow.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.utils import to_categorical
+from training_optimizations import (
+    add_drought_labels,
+    batched_predict,
+    configure_cpu_runtime,
+    create_sequences_from_df_fast,
+    engineer_base_features,
+    ensure_float32_3d,
+    scale_features_inplace,
+)
 
 print(f'TensorFlow version: {tf.__version__}')
 
@@ -43,6 +52,7 @@ TARGET_FEATURE_COUNT = 30
 # Weekly setup
 SEQ_LENGTH = 52
 BATCH_SIZE = 64
+PREDICT_BATCH_SIZE = 256
 EPOCHS = 120
 
 # Temporal boundaries
@@ -59,14 +69,14 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
-os.environ['PYTHONHASHSEED'] = str(SEED)
-os.environ['TF_DETERMINISTIC_OPS'] = '1'
+cpu_runtime = configure_cpu_runtime(SEED)
 
 print('Config ready')
 print(f'Data path: {DATA_PATH}')
 print(f'Use targeted class boost: {USE_TARGETED_CLASS_BOOST}')
 print(f'Class weight boost: {CLASS_WEIGHT_BOOST}')
 print(f'Output folder: {OUTPUT_FOLDER}')
+print(f'CPU runtime config: {cpu_runtime}')
 print(f'Scenario 2C: Correlation threshold = {CORRELATION_THRESHOLD}, Target feature count = {TARGET_FEATURE_COUNT}')
 
 # %% [code cell 3]
@@ -81,19 +91,8 @@ print(f'Date range: {df["week_start"].min().date()} to {df["week_start"].max().d
 print(df.head())
 
 # %% [code cell 4]
-def decumulate_drought(row):
-    pmf_d4 = row['D4']
-    pmf_d3 = max(0.0, row['D3'] - row['D4'])
-    pmf_d2 = max(0.0, row['D2'] - row['D3'])
-    pmf_d1 = max(0.0, row['D1'] - row['D2'])
-    pmf_d0 = max(0.0, row['D0'] - row['D1'])
-    pmf_none = max(0.0, row['None'])
-    return pd.Series([pmf_none, pmf_d0, pmf_d1, pmf_d2, pmf_d3, pmf_d4])
-
 pmf_cols = ['PMF_None', 'PMF_D0', 'PMF_D1', 'PMF_D2', 'PMF_D3', 'PMF_D4']
-df[pmf_cols] = df.apply(decumulate_drought, axis=1)
-df['PMF_Sum'] = df[pmf_cols].sum(axis=1)
-df['Label'] = df[pmf_cols].idxmax(axis=1).apply(lambda x: pmf_cols.index(x))
+df = add_drought_labels(df)
 label_map = {0: 'None', 1: 'D0', 2: 'D1', 3: 'D2', 4: 'D3', 5: 'D4'}
 
 print('PMF sum stats:')
@@ -106,27 +105,7 @@ for idx, cnt in class_dist.items():
 
 # %% [code cell 5]
 base_weather = ['ALLSKY_SFC_SW_DWN', 'PRECTOTCORR', 'PS', 'RH2M', 'T2M', 'WS2M']
-df_fe = df.copy().sort_values(['FIPS', 'week_start']).reset_index(drop=True)
-
-for lag in [1, 2, 4, 8]:
-    df_fe[f'PREC_lag{lag}'] = df_fe.groupby('FIPS')['PRECTOTCORR'].shift(lag)
-    df_fe[f'T2M_lag{lag}'] = df_fe.groupby('FIPS')['T2M'].shift(lag)
-    df_fe[f'RH2M_lag{lag}'] = df_fe.groupby('FIPS')['RH2M'].shift(lag)
-
-for window in [4, 12]:
-    df_fe[f'PREC_roll{window}_mean'] = df_fe.groupby('FIPS')['PRECTOTCORR'].transform(lambda x: x.shift(1).rolling(window, min_periods=1).mean())
-    df_fe[f'PREC_roll{window}_std'] = df_fe.groupby('FIPS')['PRECTOTCORR'].transform(lambda x: x.shift(1).rolling(window, min_periods=1).std().fillna(0.0))
-    df_fe[f'T2M_roll{window}_mean'] = df_fe.groupby('FIPS')['T2M'].transform(lambda x: x.shift(1).rolling(window, min_periods=1).mean())
-
-iso_week = df_fe['week_start'].dt.isocalendar().week.astype(int)
-df_fe['week_sin'] = np.sin(2 * np.pi * iso_week / 52.0)
-df_fe['week_cos'] = np.cos(2 * np.pi * iso_week / 52.0)
-
-for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
-    df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
-    df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
-
-df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
+df_fe = engineer_base_features(df)
 
 feature_cols = [
     'ALLSKY_SFC_SW_DWN', 'PRECTOTCORR', 'PS', 'RH2M', 'T2M', 'WS2M',
@@ -270,38 +249,18 @@ print('=' * 80)
 
 # %% [code cell 7]
 scaler = MinMaxScaler()
-scaler.fit(train_df[feature_cols])
-df_fe.loc[:, feature_cols] = scaler.transform(df_fe[feature_cols])
+df_fe = scale_features_inplace(df_fe, train_df, feature_cols, scaler)
 
 print('Scaling done using train-only fit.')
 
 # %% [code cell 8]
-def create_sequences_from_df(df_input, feature_columns, label_col, seq_length=52, id_col='FIPS', start_date=None, end_date=None):
-    X, y = [], []
-    for _, group in df_input.groupby(id_col):
-        group = group.sort_values('week_start')
-        feats = group[feature_columns].values
-        labels = group[label_col].values
-        dates = group['week_start'].values
-        if len(group) < seq_length:
-            continue
-        for i in range(seq_length - 1, len(group)):
-            target_date = pd.Timestamp(dates[i])
-            if start_date is not None and target_date < pd.Timestamp(start_date):
-                continue
-            if end_date is not None and target_date > pd.Timestamp(end_date):
-                continue
-            X.append(feats[i - seq_length + 1:i + 1])
-            y.append(labels[i])
-    return np.array(X), np.array(y)
-
-X_train_seq, y_train_seq = create_sequences_from_df(
+X_train_seq, y_train_seq = create_sequences_from_df_fast(
     df_fe, feature_cols, 'Label', SEQ_LENGTH, start_date=None, end_date=TRAIN_END_DATE
 )
-X_val_seq, y_val_seq = create_sequences_from_df(
+X_val_seq, y_val_seq = create_sequences_from_df_fast(
     df_fe, feature_cols, 'Label', SEQ_LENGTH, start_date=VAL_START_DATE, end_date=VAL_END_DATE
 )
-X_test_seq, y_test = create_sequences_from_df(
+X_test_seq, y_test = create_sequences_from_df_fast(
     df_fe, feature_cols, 'Label', SEQ_LENGTH, start_date=TEST_START_DATE, end_date=None
 )
 
@@ -311,6 +270,10 @@ print(f'X_test_seq:  {X_test_seq.shape}')
 print(f'Train distribution: {Counter(y_train_seq)}')
 print(f'Val distribution:   {Counter(y_val_seq)}')
 print(f'Test distribution:  {Counter(y_test)}')
+
+X_train_seq = ensure_float32_3d(X_train_seq)
+X_val_seq = ensure_float32_3d(X_val_seq)
+X_test_seq = ensure_float32_3d(X_test_seq)
 
 split_dates = {
     'train_max': train_df['week_start'].max(),
@@ -448,7 +411,7 @@ class MacroF1Callback(Callback):
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
-        val_pred = self.model.predict(self.x_val, verbose=0)
+        val_pred = batched_predict(self.model, self.x_val, PREDICT_BATCH_SIZE)
         val_pred_label = np.argmax(val_pred, axis=1)
         val_true_label = np.argmax(self.y_val, axis=1)
         score = f1_score(val_true_label, val_pred_label, average='macro', zero_division=0)
@@ -458,12 +421,12 @@ class MacroF1Callback(Callback):
 def prepare_training_data(x_train, y_train, balancer_name, seed):
     balancer = get_balancer(balancer_name, seed)
     if balancer is None:
-        return x_train, y_train
+        return ensure_float32_3d(x_train), np.asarray(y_train, dtype=np.int32)
     n_samples_local, n_steps_local, n_features_local = x_train.shape
     x_train_flat = x_train.reshape(n_samples_local, n_steps_local * n_features_local)
     x_bal_flat, y_bal = balancer.fit_resample(x_train_flat, y_train)
     x_bal = x_bal_flat.reshape(-1, n_steps_local, n_features_local)
-    return x_bal, y_bal
+    return ensure_float32_3d(x_bal), np.asarray(y_bal, dtype=np.int32)
 
 def compute_class_weights(y_labels):
     cw = compute_class_weight(class_weight='balanced', classes=np.arange(num_classes), y=y_labels)
@@ -539,7 +502,7 @@ for i, cfg in enumerate(TRIAL_CONFIGS, start=1):
         **fit_kwargs,
     )
 
-    val_pred_prob = model.predict(X_val_seq, verbose=0)
+    val_pred_prob = batched_predict(model, X_val_seq, PREDICT_BATCH_SIZE)
     val_pred = np.argmax(val_pred_prob, axis=1)
     val_macro_f1 = f1_score(y_val_seq, val_pred, average='macro', zero_division=0)
     trial_results.append({'name': cfg['name'], 'val_macro_f1': float(val_macro_f1), 'balancer': cfg['balancer']})
@@ -575,7 +538,7 @@ def tune_class_multipliers(y_true, y_prob, n_classes=6, n_iter=2500, seed=SEED):
 
     return best_m, float(best_score)
 
-val_best_prob = best_model.predict(X_val_seq, verbose=0)
+val_best_prob = batched_predict(best_model, X_val_seq, PREDICT_BATCH_SIZE)
 class_multipliers, tuned_val_macro_f1 = tune_class_multipliers(y_val_seq, val_best_prob, n_classes=num_classes, n_iter=2500, seed=SEED)
 raw_val_macro_f1 = f1_score(y_val_seq, np.argmax(val_best_prob, axis=1), average='macro', zero_division=0)
 print('\nClass multiplier calibration (from validation only):')
@@ -604,18 +567,20 @@ plt.savefig(f'{OUTPUT_FOLDER}/training_history.png', dpi=140)
 plt.show()
 
 # %% [code cell 13]
-y_pred_prob = best_model.predict(X_test_seq, verbose=0)
+y_pred_prob = batched_predict(best_model, X_test_seq, PREDICT_BATCH_SIZE)
 y_pred_raw = np.argmax(y_pred_prob, axis=1)
 y_pred = np.argmax(y_pred_prob * class_multipliers, axis=1)
 
 present_classes = sorted(set(y_test) | set(y_pred))
 target_names = [label_map[i] for i in present_classes]
 
+report_raw = classification_report(y_test, y_pred_raw, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 report = classification_report(y_test, y_pred, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 accuracy = accuracy_score(y_test, y_pred)
 macro_f1 = f1_score(y_test, y_pred, average='macro', zero_division=0)
 weighted_f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
 macro_f1_raw = f1_score(y_test, y_pred_raw, average='macro', zero_division=0)
+weighted_f1_raw = f1_score(y_test, y_pred_raw, average='weighted', zero_division=0)
 accuracy_raw = accuracy_score(y_test, y_pred_raw)
 
 print('=' * 70)
@@ -657,6 +622,7 @@ plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/confusion_matrix.png', dpi=140)
 plt.show()
 
+per_class_f1_raw = f1_score(y_test, y_pred_raw, labels=list(range(num_classes)), average=None, zero_division=0)
 per_class_f1 = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
 fig, ax = plt.subplots(figsize=(10, 5))
 bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1)
@@ -687,7 +653,9 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'Selected ranking CSV: {selected_ranking_csv_path}\n')
     f.write(f'Pruned pairs CSV: {pruned_pairs_csv_path}\n')
     f.write(f'Final selected feature count: {len(feature_cols_corr)}\n')
-    f.write(f'Selected features: {feature_cols_corr}\n')
+    f.write('Selected features:\n')
+    for feat in feature_cols_corr:
+        f.write(f'  {feat}\n')
     f.write('Selected feature ranking (correlation-aware):\n')
     f.write('  rank | feature | mutual_information_score | max_abs_corr_with_higher_ranked_feature | compared_to\n')
     for rank, row in enumerate(selected_feature_ranking, 1):
@@ -701,17 +669,23 @@ with open(summary_path, 'w', encoding='utf-8') as f:
     f.write(f'Class multipliers: {class_multipliers.tolist()}\n')
     f.write(f'Accuracy (raw): {accuracy_raw:.4f}\n')
     f.write(f'Macro F1 (raw): {macro_f1_raw:.4f}\n')
-    f.write(f'Accuracy: {accuracy:.4f}\n')
-    f.write(f'Macro F1: {macro_f1:.4f}\n')
-    f.write(f'Weighted F1: {weighted_f1:.4f}\n\n')
+    f.write(f'Weighted F1 (raw): {weighted_f1_raw:.4f}\n')
+    f.write(f'Accuracy (tuned): {accuracy:.4f}\n')
+    f.write(f'Macro F1 (tuned): {macro_f1:.4f}\n')
+    f.write(f'Weighted F1 (tuned): {weighted_f1:.4f}\n\n')
     f.write('Trial leaderboard:\n')
     for row in sorted(trial_results, key=lambda x: x['val_macro_f1'], reverse=True):
         f.write(f'  {row["name"]}: {row["val_macro_f1"]:.4f} (balancer={row["balancer"]})\n')
     f.write('\n')
-    f.write('Per-class F1:\n')
+    f.write('Per-class F1 (raw):\n')
+    for i in range(num_classes):
+        f.write(f'  {label_map[i]}: {per_class_f1_raw[i]:.4f}\n')
+    f.write('\nPer-class F1 (tuned):\n')
     for i in range(num_classes):
         f.write(f'  {label_map[i]}: {per_class_f1[i]:.4f}\n')
-    f.write('\nClassification Report:\n')
+    f.write('\nClassification Report (raw):\n')
+    f.write(report_raw)
+    f.write('\nClassification Report (tuned):\n')
     f.write(report)
 
 print(f'Feature-model mutual information saved to {mi_scores_csv_path}')

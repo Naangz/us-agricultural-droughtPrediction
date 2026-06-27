@@ -14,9 +14,10 @@ Selected features:
   WS2M
 Accuracy (raw): 0.1031
 Macro F1 (raw): 0.0965
-Accuracy: 0.1438
-Macro F1: 0.1185
-Weighted F1: 0.1201
+Weighted F1 (raw): 0.0798
+Accuracy (tuned): 0.1438
+Macro F1 (tuned): 0.1185
+Weighted F1 (tuned): 0.1201
 
 Trial leaderboard:
   ros_focal_no_cw_96x48: 0.1746 (balancer=ROS)
