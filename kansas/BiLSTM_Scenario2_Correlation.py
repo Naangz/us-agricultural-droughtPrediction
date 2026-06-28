@@ -27,6 +27,18 @@ from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, Input, 
 from tensorflow.keras.callbacks import Callback, EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.utils import to_categorical
 
+from results_summary_utils import write_results_summary
+
+SHOW_PLOTS = os.environ.get('DISABLE_MATPLOTLIB_SHOW', '').strip().lower() not in {'1', 'true', 'yes', 'on'}
+
+
+def maybe_show_plots():
+    if SHOW_PLOTS:
+        plt.show()
+    else:
+        plt.close('all')
+
+
 print(f'TensorFlow version: {tf.__version__}')
 
 # %% [code cell 2]
@@ -35,6 +47,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KANSAS_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(ROOT_DIR, 'Integrated_weekly_KAN_20counties.csv')
 OUTPUT_FOLDER = os.path.join(KANSAS_DIR, 'output_weekly_kansas_scenario2')
+SCENARIO_NAME = 'Scenario 2 - Correlation-aware Feature Selection'
 
 # Scenario 2: Correlation-aware feature selection
 CORRELATION_THRESHOLD = 0.9
@@ -64,6 +77,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 
 print('Config ready')
 print(f'Data path: {DATA_PATH}')
+print(f'Scenario: {SCENARIO_NAME}')
 print(f'Use targeted class boost: {USE_TARGETED_CLASS_BOOST}')
 print(f'Class weight boost: {CLASS_WEIGHT_BOOST}')
 print(f'Output folder: {OUTPUT_FOLDER}')
@@ -126,8 +140,6 @@ for col in ['None', 'D0', 'D1', 'D2', 'D3', 'D4']:
     df_fe[f'{col}_lag1'] = df_fe.groupby('FIPS')[col].shift(1)
     df_fe[f'{col}_lag2'] = df_fe.groupby('FIPS')[col].shift(2)
 
-df_fe['drought_carryover_lag1'] = df_fe['D0_lag1'] + df_fe['D1_lag1'] + 0.5 * df_fe['D2_lag1']
-df_fe['severe_carryover_lag1'] = df_fe['D3_lag1'] + df_fe['D4_lag1']
 df_fe['heat_dry_stress'] = df_fe['T2M'] * (1.0 - df_fe['RH2M'] / 100.0)
 
 feature_cols = [
@@ -140,8 +152,9 @@ feature_cols = [
     'week_sin', 'week_cos',
     'None_lag1', 'D0_lag1', 'D1_lag1', 'D2_lag1', 'D3_lag1', 'D4_lag1',
     'None_lag2', 'D0_lag2', 'D1_lag2', 'D2_lag2', 'D3_lag2', 'D4_lag2',
-    'drought_carryover_lag1', 'severe_carryover_lag1', 'heat_dry_stress'
+    'heat_dry_stress'
 ]
+baseline_feature_count = len(feature_cols)
 
 before_drop = len(df_fe)
 df_fe = df_fe.dropna(subset=feature_cols + ['Label']).reset_index(drop=True)
@@ -584,30 +597,37 @@ axes[1].grid(alpha=0.3)
 
 plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/training_history.png', dpi=140)
-plt.show()
+maybe_show_plots()
 
 # %% [code cell 13]
 y_pred_prob = best_model.predict(X_test_seq, verbose=0)
 y_pred_raw = np.argmax(y_pred_prob, axis=1)
 y_pred = np.argmax(y_pred_prob * class_multipliers, axis=1)
 
-present_classes = sorted(set(y_test) | set(y_pred))
+present_classes = sorted(set(y_test) | set(y_pred_raw) | set(y_pred))
 target_names = [label_map[i] for i in present_classes]
 
-report = classification_report(y_test, y_pred, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
+report_raw = classification_report(y_test, y_pred_raw, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
+report_tuned = classification_report(y_test, y_pred, labels=present_classes, target_names=target_names, digits=4, zero_division=0)
 accuracy = accuracy_score(y_test, y_pred)
 macro_f1 = f1_score(y_test, y_pred, average='macro', zero_division=0)
 weighted_f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
 macro_f1_raw = f1_score(y_test, y_pred_raw, average='macro', zero_division=0)
+weighted_f1_raw = f1_score(y_test, y_pred_raw, average='weighted', zero_division=0)
 accuracy_raw = accuracy_score(y_test, y_pred_raw)
 
 print('=' * 70)
-print('CLASSIFICATION REPORT')
+print('CLASSIFICATION REPORT (RAW)')
 print('=' * 70)
-print(report)
+print(report_raw)
+print('=' * 70)
+print('CLASSIFICATION REPORT (TUNED)')
+print('=' * 70)
+print(report_tuned)
 print('=' * 70)
 print(f'Accuracy (raw):    {accuracy_raw:.4f}')
 print(f'Macro F1 (raw):    {macro_f1_raw:.4f}')
+print(f'Weighted F1 (raw): {weighted_f1_raw:.4f}')
 print(f'Accuracy:    {accuracy:.4f}')
 print(f'Macro F1:    {macro_f1:.4f}')
 print(f'Weighted F1: {weighted_f1:.4f}')
@@ -638,12 +658,13 @@ axes[1].set_ylabel('Actual')
 
 plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/confusion_matrix.png', dpi=140)
-plt.show()
+maybe_show_plots()
 
-per_class_f1 = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
+per_class_f1_raw = f1_score(y_test, y_pred_raw, labels=list(range(num_classes)), average=None, zero_division=0)
+per_class_f1_tuned = f1_score(y_test, y_pred, labels=list(range(num_classes)), average=None, zero_division=0)
 fig, ax = plt.subplots(figsize=(10, 5))
-bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1)
-for bar, val in zip(bars, per_class_f1):
+bars = ax.bar([label_map[i] for i in range(num_classes)], per_class_f1_tuned)
+for bar, val in zip(bars, per_class_f1_tuned):
     ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.01, f'{val:.3f}', ha='center')
 ax.axhline(macro_f1, color='red', linestyle='--', label=f'Macro F1: {macro_f1:.4f}')
 ax.set_ylim(0, 1.05)
@@ -652,44 +673,53 @@ ax.grid(alpha=0.3, axis='y')
 ax.legend()
 plt.tight_layout()
 plt.savefig(f'{OUTPUT_FOLDER}/per_class_f1.png', dpi=140)
-plt.show()
+maybe_show_plots()
 
 # %% [code cell 15]
 summary_path = f'{OUTPUT_FOLDER}/results_summary.txt'
-with open(summary_path, 'w', encoding='utf-8') as f:
-    f.write('BiLSTM Weekly Kansas - Scenario 2: Correlation-aware Feature Selection\n')
-    f.write(f'Best trial: {best_trial["name"]}\n')
-    f.write(f'Best trial config: {best_trial}\n')
-    f.write(f'Seq Length: {SEQ_LENGTH}\n')
-    f.write(f'\n--- FEATURE SELECTION ---\n')
-    f.write(f'Baseline feature count: 41\n')
-    f.write(f'Correlation threshold: {CORRELATION_THRESHOLD}\n')
-    f.write(f'Final selected feature count: {len(feature_cols_corr)}\n')
-    f.write(f'Selected features: {feature_cols_corr}\n')
-    f.write('Selected feature ranking (correlation-aware):\n')
-    f.write('  rank | feature | max_abs_corr_with_higher_ranked_feature | compared_to\n')
-    for rank, row in enumerate(selected_feature_ranking, 1):
-        anchor = row['max_corr_prev_feat'] if row['max_corr_prev_feat'] is not None else '-'
-        f.write(
-            f"  {rank:2d} | {row['feature']} | {row['max_abs_corr_prev']:.4f} | {anchor}\n"
-        )
-    f.write(f'\n--- RESULTS ---\n')
-    f.write(f'Val Macro F1 (best trial): {best_val_macro_f1:.4f}\n')
-    f.write(f'Val Macro F1 (raw/tuned): {raw_val_macro_f1:.4f} / {tuned_val_macro_f1:.4f}\n')
-    f.write(f'Class multipliers: {class_multipliers.tolist()}\n')
-    f.write(f'Accuracy (raw): {accuracy_raw:.4f}\n')
-    f.write(f'Macro F1 (raw): {macro_f1_raw:.4f}\n')
-    f.write(f'Accuracy: {accuracy:.4f}\n')
-    f.write(f'Macro F1: {macro_f1:.4f}\n')
-    f.write(f'Weighted F1: {weighted_f1:.4f}\n\n')
-    f.write('Trial leaderboard:\n')
-    for row in sorted(trial_results, key=lambda x: x['val_macro_f1'], reverse=True):
-        f.write(f'  {row["name"]}: {row["val_macro_f1"]:.4f} (balancer={row["balancer"]})\n')
-    f.write('\n')
-    f.write('Per-class F1:\n')
-    for i in range(num_classes):
-        f.write(f'  {label_map[i]}: {per_class_f1[i]:.4f}\n')
-    f.write('\nClassification Report:\n')
-    f.write(report)
+ranking_lines = [
+    'rank | feature | max_abs_corr_with_higher_ranked_feature | compared_to'
+]
+for rank, row in enumerate(selected_feature_ranking, 1):
+    anchor = row['max_corr_prev_feat'] if row['max_corr_prev_feat'] is not None else '-'
+    ranking_lines.append(
+        f'{rank:2d} | {row["feature"]} | {row["max_abs_corr_prev"]:.4f} | {anchor}'
+    )
+
+write_results_summary(
+    summary_path=summary_path,
+    scenario_name=SCENARIO_NAME,
+    selected_features=feature_cols,
+    best_trial=best_trial,
+    seq_length=SEQ_LENGTH,
+    best_val_macro_f1=best_val_macro_f1,
+    raw_val_macro_f1=raw_val_macro_f1,
+    tuned_val_macro_f1=tuned_val_macro_f1,
+    class_multipliers=class_multipliers,
+    raw_metrics={
+        'accuracy': accuracy_raw,
+        'macro_f1': macro_f1_raw,
+        'weighted_f1': weighted_f1_raw,
+    },
+    tuned_metrics={
+        'accuracy': accuracy,
+        'macro_f1': macro_f1,
+        'weighted_f1': weighted_f1,
+    },
+    per_class_f1_raw=per_class_f1_raw,
+    per_class_f1_tuned=per_class_f1_tuned,
+    report_raw=report_raw,
+    report_tuned=report_tuned,
+    trial_results=trial_results,
+    label_map=label_map,
+    extra_sections=[
+        ('Feature Selection', [
+            f'Baseline feature count: {baseline_feature_count}',
+            f'Correlation threshold: {CORRELATION_THRESHOLD}',
+            f'Final selected feature count: {len(feature_cols_corr)}',
+        ]),
+        ('Selected Feature Ranking (Correlation-aware)', ranking_lines),
+    ],
+)
 
 print(f'Results saved to {summary_path}')
