@@ -23,7 +23,7 @@ fi
 
 # shellcheck disable=SC1091
 source "$CONDA_BASE/etc/profile.d/conda.sh"
-conda activate env_ta
+conda activate bilstm-gpu
 
 export MPLBACKEND=Agg
 export DISABLE_MATPLOTLIB_SHOW=1

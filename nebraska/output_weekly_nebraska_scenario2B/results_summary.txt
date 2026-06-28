@@ -1,47 +1,111 @@
-BiLSTM Weekly Nebraska - Scenario 2B: Correlation-aware Feature Selection (Top-25)
+Scenario 2B - Correlation-aware Feature Selection (Top-25)
+==========================================================
+
 Best trial: ros_focal_no_cw_96x48
 Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
 Seq Length: 52
+Val Macro F1 (best trial): 0.6525
+Val Macro F1 (raw): 0.6525
+Val Macro F1 (tuned): 0.6889
+Class multipliers: [1.4479331970214844, 1.148991584777832, 0.6998769044876099, 0.854198157787323, 1.7862962484359741, 0.6537574529647827]
 
---- FEATURE SELECTION ---
-Baseline feature count: 41
+Features Used
+=============
+None_lag1
+RH2M_lag8
+T2M_lag8
+ALLSKY_SFC_SW_DWN
+PREC_roll12_std
+T2M_lag1
+RH2M_lag4
+T2M_lag4
+PS
+PREC_roll4_mean
+heat_dry_stress
+RH2M_lag1
+RH2M_lag2
+PREC_roll12_mean
+PREC_lag2
+PREC_roll4_std
+RH2M
+PREC_lag8
+WS2M
+PRECTOTCORR
+PREC_lag1
+PREC_lag4
+D1_lag1
+D2_lag1
+D3_lag1
+
+Feature Selection
+=================
+Baseline feature count: 39
 Correlation threshold: 0.9
 Final selected feature count: 25
-Selected features: ['drought_carryover_lag1', 'PREC_roll12_std', 'PREC_roll4_mean', 'RH2M_lag1', 'T2M_roll12_mean', 'RH2M_lag4', 'ALLSKY_SFC_SW_DWN', 'PREC_roll4_std', 'RH2M_lag8', 'PREC_roll12_mean', 'PS', 'RH2M', 'RH2M_lag2', 'T2M_roll4_mean', 'WS2M', 'heat_dry_stress', 'PREC_lag2', 'PREC_lag1', 'PREC_lag8', 'PRECTOTCORR', 'PREC_lag4', 'D0_lag2', 'D2_lag1', 'severe_carryover_lag1', 'D4_lag2']
 
---- RESULTS ---
-Val Macro F1 (best trial): 0.8510
-Val Macro F1 (raw/tuned): 0.8510 / 0.8606
-Class multipliers: [1.198161244392395, 0.9964331388473511, 0.9212562441825867, 0.724755585193634, 0.8763200640678406, 0.6727344989776611]
-Accuracy (raw): 0.7620
-Macro F1 (raw): 0.7492
-Accuracy: 0.7689
-Macro F1: 0.7517
-Weighted F1: 0.7752
+Trial Leaderboard
+=================
+ros_focal_no_cw_96x48: 0.6525 (balancer=ROS)
+ros_focal_inv_no_cw_128x64: 0.6410 (balancer=ROS)
+none_focal_inv_cw_64x32: 0.5896 (balancer=NONE)
 
-Trial leaderboard:
-  ros_focal_no_cw_96x48: 0.8510 (balancer=ROS)
-  ros_focal_inv_no_cw_128x64: 0.8477 (balancer=ROS)
-  none_focal_inv_cw_64x32: 0.6741 (balancer=NONE)
+Raw Results
+===========
+Accuracy: 0.7536
+Macro F1: 0.6695
+Weighted F1: 0.7636
 
-Per-class F1:
-  None: 0.9041
-  D0: 0.6976
-  D1: 0.8000
-  D2: 0.7425
-  D3: 0.6404
-  D4: 0.7257
+Tuned Results
+=============
+Accuracy: 0.7589
+Macro F1: 0.6695
+Weighted F1: 0.7602
 
-Classification Report:
+Per-Class F1 Raw
+================
+None: 0.9135
+D0: 0.6929
+D1: 0.7972
+D2: 0.7931
+D3: 0.5684
+D4: 0.2519
+
+Per-Class F1 Tuned
+==================
+None: 0.9200
+D0: 0.7182
+D1: 0.7721
+D2: 0.7607
+D3: 0.6334
+D4: 0.2128
+
+Classification Report Raw
+=========================
               precision    recall  f1-score   support
 
-        None     0.9441    0.8674    0.9041       973
-          D0     0.6580    0.7422    0.6976       547
-          D1     0.8438    0.7605    0.8000       952
-          D2     0.8417    0.6642    0.7425      1081
-          D3     0.5162    0.8436    0.6404       473
-          D4     0.6649    0.7987    0.7257       154
+        None     0.9441    0.8849    0.9135       973
+          D0     0.6949    0.6910    0.6929       547
+          D1     0.8216    0.7742    0.7972       952
+          D2     0.8265    0.7623    0.7931      1081
+          D3     0.5164    0.6321    0.5684       473
+          D4     0.2032    0.3312    0.2519       154
 
-    accuracy                         0.7689      4180
-   macro avg     0.7448    0.7794    0.7517      4180
-weighted avg     0.7986    0.7689    0.7752      4180
+    accuracy                         0.7536      4180
+   macro avg     0.6678    0.6793    0.6695      4180
+weighted avg     0.7775    0.7536    0.7636      4180
+
+Classification Report Tuned
+===========================
+              precision    recall  f1-score   support
+
+        None     0.9297    0.9106    0.9200       973
+          D0     0.6775    0.7642    0.7182       547
+          D1     0.8847    0.6849    0.7721       952
+          D2     0.7986    0.7262    0.7607      1081
+          D3     0.5019    0.8584    0.6334       473
+          D4     0.3086    0.1623    0.2128       154
+
+    accuracy                         0.7589      4180
+   macro avg     0.6835    0.6844    0.6695      4180
+weighted avg     0.7812    0.7589    0.7602      4180
+

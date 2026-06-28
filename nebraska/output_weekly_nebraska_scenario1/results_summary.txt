@@ -1,0 +1,119 @@
+Scenario 1 - Nebraska Baseline
+==============================
+
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 52
+Val Macro F1 (best trial): 0.8514
+Val Macro F1 (raw): 0.8514
+Val Macro F1 (tuned): 0.8641
+Class multipliers: [1.3538963794708252, 1.0908902883529663, 0.7953732013702393, 0.7809790968894958, 1.7999999523162842, 0.7386244535446167]
+
+Features Used
+=============
+ALLSKY_SFC_SW_DWN
+PRECTOTCORR
+PS
+RH2M
+T2M
+WS2M
+PREC_lag1
+PREC_lag2
+PREC_lag4
+PREC_lag8
+T2M_lag1
+T2M_lag2
+T2M_lag4
+T2M_lag8
+RH2M_lag1
+RH2M_lag2
+RH2M_lag4
+RH2M_lag8
+PREC_roll4_mean
+PREC_roll4_std
+PREC_roll12_mean
+PREC_roll12_std
+T2M_roll4_mean
+T2M_roll12_mean
+week_sin
+week_cos
+None_lag1
+D0_lag1
+D1_lag1
+D2_lag1
+D3_lag1
+D4_lag1
+None_lag2
+D0_lag2
+D1_lag2
+D2_lag2
+D3_lag2
+D4_lag2
+heat_dry_stress
+
+Trial Leaderboard
+=================
+ros_focal_no_cw_96x48: 0.8514 (balancer=ROS)
+ros_focal_inv_no_cw_128x64: 0.8330 (balancer=ROS)
+none_focal_inv_cw_64x32: 0.7902 (balancer=NONE)
+
+Raw Results
+===========
+Accuracy: 0.8077
+Macro F1: 0.7958
+Weighted F1: 0.8086
+
+Tuned Results
+=============
+Accuracy: 0.7969
+Macro F1: 0.7718
+Weighted F1: 0.7980
+
+Per-Class F1 Raw
+================
+None: 0.9134
+D0: 0.6852
+D1: 0.7893
+D2: 0.8061
+D3: 0.7836
+D4: 0.7974
+
+Per-Class F1 Tuned
+==================
+None: 0.9187
+D0: 0.7263
+D1: 0.7972
+D2: 0.7686
+D3: 0.7401
+D4: 0.6800
+
+Classification Report Raw
+=========================
+              precision    recall  f1-score   support
+
+        None     0.9451    0.8839    0.9134       973
+          D0     0.6962    0.6746    0.6852       547
+          D1     0.7877    0.7910    0.7893       952
+          D2     0.8248    0.7882    0.8061      1081
+          D3     0.7012    0.8879    0.7836       473
+          D4     0.8026    0.7922    0.7974       154
+
+    accuracy                         0.8077      4180
+   macro avg     0.7929    0.8030    0.7958      4180
+weighted avg     0.8127    0.8077    0.8086      4180
+
+Classification Report Tuned
+===========================
+              precision    recall  f1-score   support
+
+        None     0.9323    0.9054    0.9187       973
+          D0     0.7110    0.7422    0.7263       547
+          D1     0.8264    0.7700    0.7972       952
+          D2     0.8235    0.7206    0.7686      1081
+          D3     0.6082    0.9450    0.7401       473
+          D4     0.8854    0.5519    0.6800       154
+
+    accuracy                         0.7969      4180
+   macro avg     0.7978    0.7725    0.7718      4180
+weighted avg     0.8127    0.7969    0.7980      4180
+
