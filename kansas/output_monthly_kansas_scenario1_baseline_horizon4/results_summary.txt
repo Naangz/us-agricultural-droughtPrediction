@@ -1,0 +1,102 @@
+BiLSTM Monthly Kansas Scenario 1 Baseline - 4-Month Forecast
+Best trial: ros_focal_inv_no_cw_128x64
+Best trial config: {'name': 'ros_focal_inv_no_cw_128x64', 'balancer': 'ROS', 'use_class_weight': False, 'focal_gamma': 2.0, 'focal_alpha_mode': 'inverse_train_seq', 'manual_focal_alpha': None, 'lstm_units': (128, 64), 'dropout': 0.28, 'dense_units': 96, 'lr': 0.0006, 'patience': 14}
+Seq Length: 24 months
+Forecast Horizon: 4 months
+Val Macro F1 (best trial): 0.2400
+Val Macro F1 (raw/tuned): 0.2400 / 0.3301
+Class multipliers: [0.5503264665603638, 0.6385736465454102, 1.5055506229400635, 1.3080735206604004, 0.8058609366416931, 0.637149453163147]
+Selected features:
+  ALLSKY_SFC_SW_DWN
+  PRECTOTCORR
+  PS
+  RH2M
+  T2M
+  WS2M
+  PREC_lag1
+  PREC_lag2
+  PREC_lag4
+  PREC_lag8
+  T2M_lag1
+  T2M_lag2
+  T2M_lag4
+  T2M_lag8
+  RH2M_lag1
+  RH2M_lag2
+  RH2M_lag4
+  RH2M_lag8
+  PREC_roll4_mean
+  PREC_roll4_std
+  PREC_roll12_mean
+  PREC_roll12_std
+  T2M_roll4_mean
+  T2M_roll12_mean
+  month_sin
+  month_cos
+  None_lag1
+  D0_lag1
+  D1_lag1
+  D2_lag1
+  D3_lag1
+  D4_lag1
+  None_lag2
+  D0_lag2
+  D1_lag2
+  D2_lag2
+  D3_lag2
+  D4_lag2
+Accuracy (raw): 0.2104
+Macro F1 (raw): 0.1640
+Weighted F1 (raw): 0.2104
+Accuracy: 0.1969
+Macro F1: 0.1487
+Weighted F1: 0.1877
+
+Trial leaderboard:
+  ros_focal_inv_no_cw_128x64: 0.2400 (balancer=ROS)
+  ros_focal_no_cw_96x48: 0.1899 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.0464 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.3022
+  D0: 0.2366
+  D1: 0.1848
+  D2: 0.1830
+  D3: 0.0773
+  D4: 0.0000
+
+Per-class F1:
+  None: 0.2140
+  D0: 0.1433
+  D1: 0.2889
+  D2: 0.1953
+  D3: 0.0510
+  D4: 0.0000
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.2730    0.3384    0.3022       263
+          D0     0.2993    0.1956    0.2366       225
+          D1     0.2222    0.1581    0.1848       215
+          D2     0.1637    0.2074    0.1830       135
+          D3     0.0588    0.1129    0.0773        62
+          D4     0.0000    0.0000    0.0000        60
+
+    accuracy                         0.2104       960
+   macro avg     0.1695    0.1687    0.1640       960
+weighted avg     0.2215    0.2104    0.2104       960
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.2332    0.1977    0.2140       263
+          D0     0.2396    0.1022    0.1433       225
+          D1     0.2421    0.3581    0.2889       215
+          D2     0.1626    0.2444    0.1953       135
+          D3     0.0421    0.0645    0.0510        62
+          D4     0.0000    0.0000    0.0000        60
+
+    accuracy                         0.1969       960
+   macro avg     0.1533    0.1612    0.1487       960
+weighted avg     0.1998    0.1969    0.1877       960
