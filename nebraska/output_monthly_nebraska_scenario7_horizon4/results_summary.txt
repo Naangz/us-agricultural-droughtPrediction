@@ -1,0 +1,85 @@
+BiLSTM Monthly Nebraska Scenario 7 - 4-Month Forecast
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': True, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 24 months
+Forecast Horizon: 4 months
+Val Macro F1 (best trial): 0.1931
+Val Macro F1 (raw/tuned): 0.1931 / 0.2203
+Class multipliers: [0.8461483716964722, 0.7254675030708313, 0.8880524635314941, 1.3909720182418823, 1.0761233568191528, 1.3331948518753052]
+Selected features:
+  None
+  D0
+  D1
+  D2
+  D3
+  D4
+Accuracy (raw): 0.2354
+Macro F1 (raw): 0.2072
+Accuracy: 0.2594
+Macro F1: 0.2214
+Weighted F1: 0.2505
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.1931 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.1850 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.0489 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.3810
+  D0: 0.2392
+  D1: 0.1597
+  D2: 0.1884
+  D3: 0.1481
+  D4: 0.1268
+
+Per-class F1:
+  None: 0.4492
+  D0: 0.2123
+  D1: 0.1753
+  D2: 0.2350
+  D3: 0.1059
+  D4: 0.1509
+
+Per-class Accuracy:
+  None: 0.5157
+  D0: 0.3440
+  D1: 0.1250
+  D2: 0.1720
+  D3: 0.0826
+  D4: 0.3243
+
+Per-class Accuracy (raw):
+  None: 0.3946
+  D0: 0.4880
+  D1: 0.1065
+  D2: 0.1240
+  D3: 0.1284
+  D4: 0.2432
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.3682    0.3946    0.3810       223
+          D0     0.1584    0.4880    0.2392       125
+          D1     0.3194    0.1065    0.1597       216
+          D2     0.3924    0.1240    0.1884       250
+          D3     0.1750    0.1284    0.1481       109
+          D4     0.0857    0.2432    0.1268        37
+
+    accuracy                         0.2354       960
+   macro avg     0.2499    0.2475    0.2072       960
+weighted avg     0.3034    0.2354    0.2264       960
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.3979    0.5157    0.4492       223
+          D0     0.1536    0.3440    0.2123       125
+          D1     0.2935    0.1250    0.1753       216
+          D2     0.3707    0.1720    0.2350       250
+          D3     0.1475    0.0826    0.1059       109
+          D4     0.0984    0.3243    0.1509        37
+
+    accuracy                         0.2594       960
+   macro avg     0.2436    0.2606    0.2214       960
+weighted avg     0.2955    0.2594    0.2505       960

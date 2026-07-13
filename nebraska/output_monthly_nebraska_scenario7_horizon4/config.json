@@ -1,0 +1,29 @@
+{
+    "temporal_resolution": "monthly",
+    "forecast_horizon_months": 4,
+    "max_sequence_length": 24,
+    "feature_cols": [
+        "None",
+        "D0",
+        "D1",
+        "D2",
+        "D3",
+        "D4"
+    ],
+    "label_map": {
+        "0": "None",
+        "1": "D0",
+        "2": "D1",
+        "3": "D2",
+        "4": "D3",
+        "5": "D4"
+    },
+    "class_multipliers": [
+        0.8461483716964722,
+        0.7254675030708313,
+        0.8880524635314941,
+        1.3909720182418823,
+        1.0761233568191528,
+        1.3331948518753052
+    ]
+}
