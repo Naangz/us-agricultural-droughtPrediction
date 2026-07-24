@@ -21,6 +21,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import MaxNLocator
 
 
 SEED = 42
@@ -106,6 +107,7 @@ SCENARIOS = {
     "scenario6": "output_weekly_{region}_scenario6",
     "scenario7": "output_weekly_{region}_scenario7",
 }
+SCENARIO2_VARIANTS = ["scenario2", "scenario2A", "scenario2B", "scenario2C"]
 
 
 def decumulate_drought(row: pd.Series) -> pd.Series:
@@ -322,13 +324,41 @@ def build_prediction_frame(
     return frame
 
 
-def plot_weekly_class_counts(predictions: pd.DataFrame, out_path: Path, title: str) -> None:
-    counts = (
-        predictions.groupby(["target_week", "pred_class"])
+def select_week_window(
+    predictions: pd.DataFrame,
+    week_count: int = 16,
+    position: str = "last",
+) -> pd.DataFrame:
+    unique_weeks = pd.Index(pd.to_datetime(predictions["target_week"].drop_duplicates())).sort_values()
+    if len(unique_weeks) <= week_count:
+        selected_weeks = unique_weeks
+    elif position == "first":
+        selected_weeks = unique_weeks[:week_count]
+    elif position == "middle":
+        start = (len(unique_weeks) - week_count) // 2
+        selected_weeks = unique_weeks[start : start + week_count]
+    elif position == "last":
+        selected_weeks = unique_weeks[-week_count:]
+    else:
+        raise ValueError("position must be one of: first, middle, last")
+
+    return predictions[pd.to_datetime(predictions["target_week"]).isin(selected_weeks)].copy()
+
+
+def build_weekly_class_counts(predictions: pd.DataFrame) -> pd.DataFrame:
+    plot_data = predictions.copy()
+    plot_data["target_week"] = pd.to_datetime(plot_data["target_week"])
+    plot_data["pred_class"] = plot_data["pred_class"].fillna("None")
+    return (
+        plot_data.groupby(["target_week", "pred_class"])
         .size()
         .unstack(fill_value=0)
         .reindex(columns=CLASS_NAMES, fill_value=0)
     )
+
+
+def plot_weekly_class_counts(predictions: pd.DataFrame, out_path: Path, title: str) -> None:
+    counts = build_weekly_class_counts(predictions)
 
     fig, ax = plt.subplots(figsize=(18, 7))
     x_positions = np.arange(len(counts.index))
@@ -343,6 +373,7 @@ def plot_weekly_class_counts(predictions: pd.DataFrame, out_path: Path, title: s
     ax.set_title(title)
     ax.set_xlabel("Predicted week")
     ax.set_ylabel("County count")
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.legend(title="Predicted class", ncol=6, loc="upper center", bbox_to_anchor=(0.5, -0.16))
     tick_labels = [pd.Timestamp(idx).strftime("%Y-%m-%d") for idx in counts.index]
     ax.set_xticks(x_positions)
@@ -350,6 +381,49 @@ def plot_weekly_class_counts(predictions: pd.DataFrame, out_path: Path, title: s
     plt.tight_layout()
     plt.savefig(out_path, dpi=150)
     plt.close(fig)
+    return ax
+
+
+def plot_class_counts_on_axis(ax, predictions: pd.DataFrame, title: str) -> None:
+    counts = build_weekly_class_counts(predictions)
+    x_positions = np.arange(len(counts.index))
+    bottoms = np.zeros(len(counts.index), dtype=float)
+    colors = plt.get_cmap("viridis")(np.linspace(0.08, 0.92, len(CLASS_NAMES)))
+
+    for class_name, color in zip(CLASS_NAMES, colors):
+        values = counts[class_name].to_numpy(dtype=float)
+        ax.bar(x_positions, values, bottom=bottoms, label=class_name, color=color)
+        bottoms += values
+
+    tick_labels = [pd.Timestamp(idx).strftime("%Y-%m-%d") for idx in counts.index]
+    ax.set_title(title)
+    ax.set_xlabel("Predicted week")
+    ax.set_ylabel("County count")
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(tick_labels, rotation=90, fontsize=6)
+
+
+def plot_combined_scenario_class_counts(
+    scenario_predictions: dict[str, pd.DataFrame],
+    out_path: Path,
+    title: str,
+) -> list:
+    fig, axes_grid = plt.subplots(2, 2, figsize=(22, 12), sharey=True)
+    axes = list(axes_grid.ravel())
+
+    for ax, scenario in zip(axes, SCENARIO2_VARIANTS):
+        if scenario not in scenario_predictions:
+            raise ValueError(f"Missing predictions for {scenario}")
+        plot_class_counts_on_axis(ax, scenario_predictions[scenario], scenario)
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.suptitle(title, fontsize=16)
+    fig.legend(handles, labels, title="Predicted class", ncol=6, loc="lower center")
+    fig.tight_layout(rect=(0, 0.06, 1, 0.96))
+    plt.savefig(out_path, dpi=150)
+    plt.close(fig)
+    return axes
 
 
 def plot_weekly_accuracy(predictions: pd.DataFrame, out_path: Path, title: str) -> None:
@@ -474,6 +548,11 @@ def run_scenario(
         destination / "weekly_predicted_class_counts.png",
         f"{region.title()} {scenario}: predicted drought class per week",
     )
+    plot_weekly_class_counts(
+        select_week_window(predictions, week_count=16, position="last"),
+        destination / "weekly_predicted_class_counts_16weeks.png",
+        f"{region.title()} {scenario}: predicted drought class per week (last 16 weeks)",
+    )
     plot_weekly_accuracy(
         predictions,
         destination / "weekly_accuracy.png",
@@ -486,6 +565,42 @@ def run_scenario(
     )
 
     print(f"{region}/{scenario}: wrote {csv_path}")
+
+
+def load_prediction_csv(csv_path: Path) -> pd.DataFrame:
+    return pd.read_csv(csv_path, parse_dates=["target_week"])
+
+
+def write_combined_scenario2_visuals(output_root: Path, region: str) -> list[Path]:
+    scenario_predictions = {}
+    for scenario in SCENARIO2_VARIANTS:
+        csv_path = output_root / region / scenario / "weekly_predictions.csv"
+        if not csv_path.exists():
+            return []
+        scenario_predictions[scenario] = load_prediction_csv(csv_path)
+
+    destination = output_root / region / "scenario2_combined"
+    destination.mkdir(parents=True, exist_ok=True)
+
+    full_path = destination / "weekly_predicted_class_counts_scenario2_variants.png"
+    plot_combined_scenario_class_counts(
+        scenario_predictions,
+        full_path,
+        f"{region.title()}: scenario 2 variants predicted drought class per week",
+    )
+
+    short_predictions = {
+        scenario: select_week_window(predictions, week_count=16, position="last")
+        for scenario, predictions in scenario_predictions.items()
+    }
+    short_path = destination / "weekly_predicted_class_counts_scenario2_variants_16weeks.png"
+    plot_combined_scenario_class_counts(
+        short_predictions,
+        short_path,
+        f"{region.title()}: scenario 2 variants predicted drought class per week (last 16 weeks)",
+    )
+
+    return [full_path, short_path]
 
 
 def parse_args() -> argparse.Namespace:
@@ -521,6 +636,10 @@ def main() -> None:
     for region in args.regions:
         for scenario in scenarios:
             run_scenario(repo_root, output_root, region, scenario, dry_run=args.dry_run)
+        if not args.dry_run and all(scenario in scenarios for scenario in SCENARIO2_VARIANTS):
+            written = write_combined_scenario2_visuals(output_root, region)
+            for path in written:
+                print(f"{region}/scenario2_combined: wrote {path}")
 
 
 if __name__ == "__main__":

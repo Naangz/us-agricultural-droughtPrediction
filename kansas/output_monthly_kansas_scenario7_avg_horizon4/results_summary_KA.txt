@@ -1,0 +1,91 @@
+BiLSTM Monthly Kansas Scenario 7 - 4-Month Forecast
+Best trial: ros_focal_no_cw_96x48
+Best trial config: {'name': 'ros_focal_no_cw_96x48', 'balancer': 'ROS', 'use_class_weight': True, 'focal_gamma': 1.5, 'focal_alpha_mode': 'none', 'manual_focal_alpha': None, 'lstm_units': (96, 48), 'dropout': 0.3, 'dense_units': 64, 'lr': 0.0008, 'patience': 14}
+Seq Length: 12 months
+Forecast Horizon: 4 months
+Val Macro F1 (best trial): 0.1709
+Val Macro F1 (raw/tuned): 0.1709 / 0.1852
+Class multipliers: [0.8882525563240051, 0.8442115783691406, 0.8469365239143372, 0.6566337943077087, 0.7984263300895691, 1.5675691366195679]
+Selected features:
+  None_lag1
+  D0_lag1
+  D1_lag1
+  D2_lag1
+  D3_lag1
+  D4_lag1
+  None_lag2
+  D0_lag2
+  D1_lag2
+  D2_lag2
+  D3_lag2
+  D4_lag2
+Accuracy (raw): 0.2000
+Macro F1 (raw): 0.1608
+Accuracy: 0.1972
+Macro F1: 0.1656
+Weighted F1: 0.2152
+
+Trial leaderboard:
+  ros_focal_no_cw_96x48: 0.1709 (balancer=ROS)
+  ros_focal_inv_no_cw_128x64: 0.1396 (balancer=ROS)
+  none_focal_inv_cw_64x32: 0.1007 (balancer=NONE)
+
+Per-class F1 (raw):
+  None: 0.4256
+  D0: 0.1512
+  D1: 0.1317
+  D2: 0.1106
+  D3: 0.1455
+  D4: 0.0000
+
+Per-class F1:
+  None: 0.4260
+  D0: 0.1649
+  D1: 0.1280
+  D2: 0.1046
+  D3: 0.1611
+  D4: 0.0089
+
+Per-class Accuracy:
+  None: 0.4020
+  D0: 0.1192
+  D1: 0.0899
+  D2: 0.1053
+  D3: 0.3750
+  D4: 0.0270
+
+Per-class Accuracy (raw):
+  None: 0.4069
+  D0: 0.1140
+  D1: 0.0899
+  D2: 0.1447
+  D3: 0.3750
+  D4: 0.0000
+
+Classification Report (raw):
+              precision    recall  f1-score   support
+
+        None     0.4462    0.4069    0.4256       204
+          D0     0.2245    0.1140    0.1512       193
+          D1     0.2462    0.0899    0.1317       178
+          D2     0.0894    0.1447    0.1106        76
+          D3     0.0902    0.3750    0.1455        32
+          D4     0.0000    0.0000    0.0000        37
+
+    accuracy                         0.2000       720
+   macro avg     0.1828    0.1884    0.1608       720
+weighted avg     0.2609    0.2000    0.2118       720
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        None     0.4530    0.4020    0.4260       204
+          D0     0.2674    0.1192    0.1649       193
+          D1     0.2222    0.0899    0.1280       178
+          D2     0.1039    0.1053    0.1046        76
+          D3     0.1026    0.3750    0.1611        32
+          D4     0.0053    0.0270    0.0089        37
+
+    accuracy                         0.1972       720
+   macro avg     0.1924    0.1864    0.1656       720
+weighted avg     0.2708    0.1972    0.2152       720

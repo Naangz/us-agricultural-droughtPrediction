@@ -15,19 +15,19 @@ SEED = 42
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NEBRASKA_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(ROOT_DIR, "Integrated_weekly_NEB_20counties.csv")
-OUTPUT_FOLDER = os.path.join(NEBRASKA_DIR, "output_monthly_nebraska_scenario7_horizon4")
+OUTPUT_FOLDER = os.path.join(NEBRASKA_DIR, "output_monthly_nebraska_scenario7_avg_horizon4")
 
-SCENARIO_NAME = "Scenario 7 - Monthly Drought History Only (4-Month Forecast)"
+SCENARIO_NAME = "Scenario 7 - Monthly Drought History Only (Lagged, 4-Month Forecast)"
 TIME_COL = "month_start"
-SEQ_LENGTH = 24
+SEQ_LENGTH = 12
 FORECAST_HORIZON = 4
 BATCH_SIZE = 64
 EPOCHS = 120
 
-TRAIN_END_DATE = "2019-12-31"
-VAL_START_DATE = "2020-01-01"
-VAL_END_DATE = "2021-12-31"
-TEST_START_DATE = "2022-01-01"
+TRAIN_END_DATE = "2020-12-31"
+VAL_START_DATE = "2021-01-01"
+VAL_END_DATE = "2022-12-31"
+TEST_START_DATE = "2023-01-01"
 
 USE_TARGETED_CLASS_BOOST = False
 CLASS_WEIGHT_BOOST = {0: 1.2, 1: 1.2, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0}
@@ -56,7 +56,7 @@ def add_drought_labels(df):
 
 
 def aggregate_weekly_to_monthly(df, date_col="week_start", id_col="FIPS"):
-    """Use the last weekly drought state available in each county-month."""
+    """Average weekly drought percentages into county-month rows."""
     monthly = df.copy()
     monthly[date_col] = pd.to_datetime(monthly[date_col])
     if "ValidEnd" in monthly.columns:
@@ -64,8 +64,38 @@ def aggregate_weekly_to_monthly(df, date_col="week_start", id_col="FIPS"):
 
     monthly["month_start"] = monthly[date_col].dt.to_period("M").dt.to_timestamp()
     monthly = monthly.sort_values([id_col, date_col]).reset_index(drop=True)
-    monthly = monthly.groupby([id_col, "month_start"], as_index=False).tail(1)
+    agg_spec = {col: "mean" for col in DROUGHT_COLS}
+    agg_spec[date_col] = "max"
+    if "ValidEnd" in monthly.columns:
+        agg_spec["ValidEnd"] = "max"
+    monthly = monthly.groupby([id_col, "month_start"], as_index=False).agg(agg_spec)
     return monthly.sort_values([id_col, "month_start"]).reset_index(drop=True)
+
+
+def prepare_monthly_drought_history_features(df, id_col="FIPS", time_col=TIME_COL):
+    df_fe = df.copy().sort_values([id_col, time_col]).reset_index(drop=True)
+
+    for col in DROUGHT_COLS:
+        df_fe[f"{col}_lag1"] = df_fe.groupby(id_col)[col].shift(1)
+        df_fe[f"{col}_lag2"] = df_fe.groupby(id_col)[col].shift(2)
+
+    feature_cols = [
+        "None_lag1",
+        "D0_lag1",
+        "D1_lag1",
+        "D2_lag1",
+        "D3_lag1",
+        "D4_lag1",
+        "None_lag2",
+        "D0_lag2",
+        "D1_lag2",
+        "D2_lag2",
+        "D3_lag2",
+        "D4_lag2",
+    ]
+
+    df_fe = df_fe.dropna(subset=feature_cols + ["Label"]).reset_index(drop=True)
+    return df_fe, feature_cols
 
 
 def create_sequences_from_df(
@@ -296,12 +326,13 @@ def main():
     df_monthly = df_monthly.sort_values(["FIPS", TIME_COL]).reset_index(drop=True)
 
     print(f"Weekly shape: {df_weekly.shape}")
-    print(f"Monthly shape: {df_monthly.shape}")
-    print(f"Unique counties: {df_monthly['FIPS'].nunique()}")
-    print(f"Monthly range: {df_monthly[TIME_COL].min().date()} to {df_monthly[TIME_COL].max().date()}")
+    df_fe, feature_cols = prepare_monthly_drought_history_features(df_monthly)
 
-    feature_cols = DROUGHT_COLS.copy()
-    df_fe = df_monthly.dropna(subset=feature_cols + ["Label"]).reset_index(drop=True)
+    print("Monthly aggregation: average weekly drought percentages per county-month")
+    print(f"Monthly shape: {df_monthly.shape}")
+    print(f"Feature rows after lag dropna: {len(df_fe):,}")
+    print(f"Unique counties: {df_fe['FIPS'].nunique()}")
+    print(f"Monthly range: {df_fe[TIME_COL].min().date()} to {df_fe[TIME_COL].max().date()}")
 
     print("=" * 60)
     print("SCENARIO:", SCENARIO_NAME)

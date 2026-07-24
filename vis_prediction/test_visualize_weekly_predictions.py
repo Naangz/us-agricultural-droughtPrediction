@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import MaxNLocator
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -112,6 +113,74 @@ class WeeklyPredictionUtilityTests(unittest.TestCase):
 
             self.assertTrue(out_path.exists())
             self.assertGreater(out_path.stat().st_size, 0)
+
+    def test_plot_weekly_class_counts_uses_integer_y_axis(self):
+        predictions = pd.DataFrame(
+            {
+                "target_week": pd.to_datetime(
+                    ["2022-01-02", "2022-01-02", "2022-01-09", "2022-01-09", "2022-01-09"]
+                ),
+                "pred_class": ["None", "D0", "D0", "D1", "D1"],
+            }
+        )
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            out_path = Path(tmp_dir) / "weekly_counts.png"
+            ax = vwp.plot_weekly_class_counts(predictions, out_path, "Weekly counts")
+
+            self.assertIsInstance(ax.yaxis.get_major_locator(), MaxNLocator)
+            self.assertTrue(ax.yaxis.get_major_locator()._integer)
+
+    def test_build_weekly_class_counts_treats_missing_class_as_none(self):
+        predictions = pd.DataFrame(
+            {
+                "target_week": pd.to_datetime(["2022-01-02", "2022-01-02", "2022-01-02"]),
+                "pred_class": [np.nan, "D0", "D1"],
+            }
+        )
+
+        counts = vwp.build_weekly_class_counts(predictions)
+
+        self.assertEqual(int(counts.loc[pd.Timestamp("2022-01-02")].sum()), 3)
+        self.assertEqual(int(counts.loc[pd.Timestamp("2022-01-02"), "None"]), 1)
+
+    def test_select_week_window_returns_last_16_weeks_by_default(self):
+        weeks = pd.date_range("2022-01-02", periods=20, freq="W-SUN")
+        predictions = pd.DataFrame(
+            {
+                "target_week": np.repeat(weeks, 2),
+                "pred_class": ["None", "D0"] * len(weeks),
+            }
+        )
+
+        selected = vwp.select_week_window(predictions, week_count=16)
+
+        self.assertEqual(selected["target_week"].nunique(), 16)
+        self.assertEqual(selected["target_week"].min(), weeks[4])
+        self.assertEqual(selected["target_week"].max(), weeks[-1])
+
+    def test_plot_combined_scenario_counts_writes_one_image_for_four_scenarios(self):
+        weeks = pd.date_range("2022-01-02", periods=3, freq="W-SUN")
+        scenario_predictions = {}
+        for scenario in ["scenario2", "scenario2A", "scenario2B", "scenario2C"]:
+            scenario_predictions[scenario] = pd.DataFrame(
+                {
+                    "target_week": np.repeat(weeks, 2),
+                    "pred_class": ["None", "D0"] * len(weeks),
+                }
+            )
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            out_path = Path(tmp_dir) / "combined.png"
+            axes = vwp.plot_combined_scenario_class_counts(
+                scenario_predictions,
+                out_path,
+                "Combined scenario 2 variants",
+            )
+
+            self.assertTrue(out_path.exists())
+            self.assertGreater(out_path.stat().st_size, 0)
+            self.assertEqual(len(axes), 4)
 
 
 if __name__ == "__main__":

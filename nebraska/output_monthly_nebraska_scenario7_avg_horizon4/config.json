@@ -1,0 +1,35 @@
+{
+    "temporal_resolution": "monthly",
+    "forecast_horizon_months": 4,
+    "max_sequence_length": 12,
+    "feature_cols": [
+        "None_lag1",
+        "D0_lag1",
+        "D1_lag1",
+        "D2_lag1",
+        "D3_lag1",
+        "D4_lag1",
+        "None_lag2",
+        "D0_lag2",
+        "D1_lag2",
+        "D2_lag2",
+        "D3_lag2",
+        "D4_lag2"
+    ],
+    "label_map": {
+        "0": "None",
+        "1": "D0",
+        "2": "D1",
+        "3": "D2",
+        "4": "D3",
+        "5": "D4"
+    },
+    "class_multipliers": [
+        1.191281795501709,
+        1.1237075328826904,
+        1.3750622272491455,
+        0.9210753440856934,
+        0.6510159373283386,
+        0.550000011920929
+    ]
+}
